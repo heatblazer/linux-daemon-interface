@@ -3,7 +3,7 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 
-TARGET = radis_daemon
+TARGET = test_daemon
 
 SOURCES += main.cpp \
     daemon-interface.cpp \

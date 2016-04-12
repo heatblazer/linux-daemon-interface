@@ -21,7 +21,7 @@ Daemon::Daemon()
     //use the default signal handler if none
     //it`s better to have your own implementation of the
     //signal handler function
-
+    m_tasks =  NULL;
 }
 
 Daemon::~Daemon()
@@ -78,11 +78,22 @@ int Daemon::start(int argc, char** argv)
     time_t startTime ;
     time_t endTime ;
     startTime =  endTime = time(NULL);
+
+    task* ring = NULL;
+
     do {
 
         //daemon task iterface goes here
         //todo a class for specific tasks
-
+        ring = m_tasks;
+        while ( ring != NULL )
+        {
+            if ( ring->pTask ){
+                ring->pTask(ring->argc, ring->pArgs);
+            }
+            ring = ring->next;
+        }
+        ring = m_tasks;
 
         sleep(m_sleepSeconds);
 
@@ -91,3 +102,35 @@ int Daemon::start(int argc, char** argv)
    return 1; //the return 1
 }
 
+void  Daemon::registerTask(int ID, int (*work)(int, void*), int argc, void *pArg)
+{
+    task* ntask = (task*)malloc(sizeof(task));
+    ntask->taskId = ID;
+
+    ntask->argc = argc;
+    ntask->pArgs  = pArg;
+    ntask->pTask = work;
+
+    ntask->next = m_tasks;
+    m_tasks = ntask;
+
+}
+
+
+void Daemon::deregisterTask(int ID)
+{
+    task* it = m_tasks;
+    while ( it != NULL )
+    {
+        if ( it->taskId == ID ) {
+            task* finished = it;
+            if ( finished->pTask ){
+                //complete the task first!
+                finished->pTask(finished->argc, finished->pArgs);
+            }
+            it = it->next;
+            free(finished);
+        }
+        it = it->next;
+    }
+}
