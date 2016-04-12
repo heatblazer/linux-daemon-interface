@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include <stdio.h>
-#include "radis-signals.h"
+#include "test-signals.h"
 
 class Daemon
 {
@@ -17,7 +17,7 @@ private:
     pid_t m_sessionId;
     static unsigned int m_sleepSeconds;
 
-    RadisSignals m_signals;
+    TestSignals m_signals;
 
 private:
     void    myFork(void);
