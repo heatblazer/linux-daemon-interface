@@ -1,5 +1,6 @@
 #include <iostream>
 #include "daemon-inerface.h"
+#include <stdlib.h>
 
 //!!! THE TEST MAIN FUNCTION
 using namespace std;
@@ -36,10 +37,13 @@ int work4(int a, void* pdata)
     writer("Worker 4 registerd... do some work\n");
 }
 
+#define MIN 60
+#define HR (MIN * 60 )
+
 int main(int argc, char** argv)
 {
     Daemon daemon1;
-    Daemon::set_sleep_time(3);
+    Daemon::set_sleep_time(MIN * 5);
 
 //! IMPORTANT TODO: tasks must be in separate threads
 //!
