@@ -9,6 +9,10 @@
 #include <signal.h>
 #include <pthread.h>
 
+//link with libxml2 too
+
+
+
 #define ENTER_CRITICAL_SECTION do { \
     static pthread_mutex_t cs =     PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP; \
     pthread_mutex_lock(&cs);

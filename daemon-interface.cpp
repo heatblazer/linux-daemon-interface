@@ -57,6 +57,7 @@ int Daemon::start(int argc, char** argv)
 
     myFork();
 
+
     m_sessionId = setsid();
     if ( m_sessionId < 0 )
     {
@@ -65,11 +66,31 @@ int Daemon::start(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
-    myFork();
 
-    umask(0);
+#if 0
+    int j;
+    for(j= getdtablesize(); j >=0; --j)
+    {
+        close(j);
+    }
+
+    j = open("/dev/null", O_RDWR);
+    dup(j);
+    dup(j);
+
+    umask(027);
     chdir(argv[1]);
 
+    int lfp = open(".lockfile.lck", O_RDWR|O_CREAT, 0640);
+    if ( lfp < 0 ){
+        exit(1);
+    } else  { }
+
+    if ( lockf(lfp, F_TLOCK, 0) < 0)
+    {
+        exit(0);
+    } else { }
+#endif
 
     close(STDIN_FILENO);
     close(STDOUT_FILENO);
@@ -79,8 +100,9 @@ int Daemon::start(int argc, char** argv)
     time_t endTime ;
     startTime =  endTime = time(NULL);
 
-    task* ring = NULL;
+    myFork();
 
+    task* ring = NULL;
     do {
 
         //daemon task iterface goes here

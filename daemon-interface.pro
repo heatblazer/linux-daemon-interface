@@ -20,4 +20,4 @@ HEADERS += \
 
 
 LIBS += -lusb
-LIBS += -lpci
+LIBS += -lpthread
