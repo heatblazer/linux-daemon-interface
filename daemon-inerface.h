@@ -1,11 +1,32 @@
 #ifndef DAEMONINERFACE
 #define DAEMONINERFACE
 #include "defs.h"
-
 #include "test-signals.h"
+#include <stdlib.h>
 
+#define SHELL "/bin/sh"
 class Daemon
 {
+public:
+    static int System(const char* cmd)
+    {
+        int status = 0;
+        pid_t pid = fork();
+        if ( pid == 0 ) {
+            execl(SHELL, SHELL, "-c", cmd, NULL);
+            _exit(EXIT_FAILURE);
+        } else if ( pid < 0 ) {
+           status = -1;
+        } else {
+            if ( waitpid(pid, &status, 0) != pid )
+            {
+                status = -1;
+            }
+            return status;
+        }
+
+    }
+
 private:
     //a stack based task list
     typedef struct _task {

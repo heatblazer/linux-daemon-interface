@@ -47,11 +47,13 @@ using namespace std;
 
 int work1(int a, void* pdata)
 {
-    ENTER_CRITICAL_SECTION;
     (void)a;
     (void) pdata;
-    writer("Worker 1 registerd... do some tasks...\n");
-    LEAVE_CRITICAL_SECTION;
+    pid_t pid = fork();
+    do {
+        writer("Worker 1 registered as child process\n");
+        sleep(2);
+    } while ( 1 ) ;
     return 0;
 }
 

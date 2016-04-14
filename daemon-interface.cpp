@@ -41,7 +41,6 @@ void Daemon::myFork()
     }
 }
 
-
 //the time to sleep and the function to set it
 unsigned int Daemon::m_sleepSeconds = 1;
 void Daemon::set_sleep_time(unsigned int stime)

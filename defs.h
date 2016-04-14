@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <signal.h>
 #include <pthread.h>
+#include <stddef.h>
+#include <sys/wait.h>
 
 //link with libxml2 too
 
