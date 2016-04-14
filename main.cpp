@@ -4,6 +4,41 @@
 #include <stdlib.h>
 #include <pthread.h>
 
+//test tasks
+///1. list new usb devices when plugged
+#include <usb.h>
+#include <stdio.h>
+
+#define LINE_80 "------------------------------------------------------------------------\n"
+static void list_usb(void)
+{
+    fprintf(stdout, "%s", LINE_80);
+    fprintf(stdout, "USB devices:\n");
+
+    usb_init();
+    unsigned int busses =  usb_find_busses();
+    unsigned int devices = usb_find_devices();
+    fprintf(stdout, "Busses: [%d]\tDevices: [%d]\n", busses, devices);
+
+    struct usb_bus* bus = NULL;
+    struct usb_device*     udev = NULL;
+
+
+    for ( bus = usb_busses; bus != NULL; bus = bus->next)
+    {
+        for ( udev = bus->devices; udev != NULL; udev = udev->next )
+        {
+            char msg_buffer[64] = {0};
+            sprintf(msg_buffer, "[%04x][%04x]\n", udev->descriptor.idVendor,
+                                                   udev->descriptor.idProduct);
+            writer(msg_buffer);
+
+        }
+    }
+    fprintf(stdout, "%s", LINE_80);
+}
+
+
 //!!! THE TEST MAIN FUNCTION
 using namespace std;
 
@@ -35,7 +70,7 @@ int work3(int a, void* pdata)
     ENTER_CRITICAL_SECTION;
     (void)a;
     (void) pdata;
-    writer("Worker 3 registerd... do some tasks...\n");
+    list_usb();
     LEAVE_CRITICAL_SECTION;
     return 0;
 }

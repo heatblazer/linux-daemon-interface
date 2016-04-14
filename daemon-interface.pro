@@ -17,3 +17,7 @@ HEADERS += \
     defs.h \
     test-signals.h
 
+
+
+LIBS += -lusb
+LIBS += -lpci
