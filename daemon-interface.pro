@@ -21,3 +21,4 @@ HEADERS += \
 
 LIBS += -lusb
 LIBS += -lpthread
+LIBS += -ldbus-1
