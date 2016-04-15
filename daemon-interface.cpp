@@ -113,9 +113,10 @@ int Daemon::start(int argc, char** argv)
                 ring->pTask(ring->argc, ring->pArgs);
             }
             ring = ring->next;
+
+
         }
         ring = m_tasks;
-
         sleep(m_sleepSeconds);
 
    } while ( 1 );
