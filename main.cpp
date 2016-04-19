@@ -51,8 +51,12 @@ using namespace std;
 
 int work1(int a, void* pdata)
 {
+    ENTER_CRITICAL_SECTION;
     (void)a;
     (void) pdata;
+    writer("Worker 2 registerd... do some tasks...\n");
+    LEAVE_CRITICAL_SECTION;
+
     return 0;
 }
 
@@ -79,10 +83,11 @@ int work3(int a, void* pdata)
 int work4(int a, void* pdata)
 {
     ENTER_CRITICAL_SECTION;
-
-    DBus::_init_threading();
-
+    (void)a;
+    (void) pdata;
+    writer("Worker 2 registerd... do some tasks...\n");
     LEAVE_CRITICAL_SECTION;
+
     return 0;
 }
 
@@ -93,24 +98,23 @@ int main(int argc, char** argv)
 {
 
 
-///    Daemon daemon1;
-///    Daemon::set_sleep_time(MIN * 5);
+    Daemon daemon1;
+    Daemon::set_sleep_time(MIN * 5);
 
 //! IMPORTANT TODO: tasks must be in separate threads
 //!
 //! update: tasks can enter in critical sections
 
-///  daemon1.registerTask(1, work1, 0, 0);
-
- ///   daemon1.registerTask(2, work2, 0, 0);
- ///   daemon1.registerTask(3, work3, 0, 0);
-  ///  daemon1.registerTask(4, work4, 0,0);
+      daemon1.registerTask(1, work1, 0, 0);
+      daemon1.registerTask(2, work2, 0, 0);
+      daemon1.registerTask(3, work3, 0, 0);
+      daemon1.registerTask(4, work4, 0,0);
 //known bug with deregistering tasks
 
 //TODO!
 //register before start, for more flexible interface use
 // register and deregister in separate threads
-///    daemon1.start(argc, argv);
+     daemon1.start(argc, argv);
 
 
     return 0;
