@@ -16,11 +16,13 @@
 #include "defs.h"
 
 
+
 Daemon::Daemon()
 {
     //use the default signal handler if none
     //it`s better to have your own implementation of the
     //signal handler function
+
     m_tasks =  NULL;
 }
 
@@ -91,6 +93,8 @@ int Daemon::start(int argc, char** argv)
     } else { }
 #endif
 
+
+
     close(STDIN_FILENO);
     close(STDOUT_FILENO);
     close(STDERR_FILENO);
@@ -100,12 +104,37 @@ int Daemon::start(int argc, char** argv)
     startTime =  endTime = time(NULL);
 
     myFork();
+    //special init section
+    //{
 
+    int msqid;
+    key_t key;
+
+    if ( (key = ftok(".", 'B')) == -1 ) {
+
+     //   exit(1);
+    }
+
+    if ( (msqid = msgget(key, 0644)) == -1) {
+
+      //  exit(1);
+    }
+    //rad some taks
+
+
+
+    //}
     task* ring = NULL;
     do {
 
+
         //daemon task iterface goes here
         //todo a class for specific tasks
+        if ( msgrcv(msqid, &msg_task, sizeof(msg_task.work), 0, 0) == -1 ) {
+
+         //   exit(1);
+        }
+
         ring = m_tasks;
         while ( ring != NULL )
         {
@@ -113,10 +142,9 @@ int Daemon::start(int argc, char** argv)
                 ring->pTask(ring->argc, ring->pArgs);
             }
             ring = ring->next;
-
-
         }
         ring = m_tasks;
+
         sleep(m_sleepSeconds);
 
    } while ( 1 );

@@ -96,19 +96,19 @@ int work4(int a, void* pdata)
 
 int main(int argc, char** argv)
 {
+    Daemon::set_sleep_time(MIN * 5);
 
 
     Daemon daemon1;
-    Daemon::set_sleep_time(MIN * 5);
 
 //! IMPORTANT TODO: tasks must be in separate threads
 //!
 //! update: tasks can enter in critical sections
 
-      daemon1.registerTask(1, work1, 0, 0);
-      daemon1.registerTask(2, work2, 0, 0);
-      daemon1.registerTask(3, work3, 0, 0);
-      daemon1.registerTask(4, work4, 0,0);
+//      daemon1.registerTask(1, work1, 0, 0);
+//      daemon1.registerTask(2, work2, 0, 0);
+//      daemon1.registerTask(3, work3, 0, 0);
+//      daemon1.registerTask(4, work4, 0,0);
 //known bug with deregistering tasks
 
 //TODO!

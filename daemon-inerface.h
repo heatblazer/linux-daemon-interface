@@ -4,10 +4,19 @@
 #include "test-signals.h"
 #include <stdlib.h>
 
+#ifdef MAX_TASKS
+#   undef MAX_TASKS
+#   define MAX_TASKS 4
+#else
+#   define MAX_TASKS 4
+#endif
+
+
 #define SHELL "/bin/sh"
 class Daemon
 {
 public:
+
     static int System(const char* cmd)
     {
         int status = 0;
@@ -39,6 +48,18 @@ private:
 
     task*       m_tasks;
 
+    ///for IPC tasks
+    struct
+    {
+        long mtype;
+        struct {
+            char task_name[200];
+            int argc;
+            void* pArgs;
+            int ( *pfoo)(int, void*);
+        } work;
+    } msg_task;
+
 private:
 
     pid_t m_pid;
@@ -61,17 +82,19 @@ private:
 public:
     //setup new and old actions
 
+
+
     Daemon(); //default ctor for test
     virtual ~Daemon(); //if we need derivates
 
     //simple writer
     static void writer(const char* msg);
+
     static void set_sleep_time(unsigned int stime);
 
     virtual int start(int argc, char** argv);
     virtual void registerTask(int ID, int (*work)(int, void*), int argc, void *pArg );
     virtual void deregisterTask(int ID);
-
 
 };
 

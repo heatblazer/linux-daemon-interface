@@ -3,15 +3,19 @@
 #define DEFS
 
 #include <unistd.h>
-#include <sys/types.h>
 #include <time.h>
 #include <stdio.h>
 #include <signal.h>
 #include <pthread.h>
 #include <stddef.h>
-#include <sys/wait.h>
 
 //link with libxml2 too
+#include <sys/msg.h>
+#include <sys/ipc.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+
+
 
 #define ENTER_CRITICAL_SECTION do { \
     static pthread_mutex_t cs =     PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP; \
