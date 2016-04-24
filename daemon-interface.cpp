@@ -10,6 +10,7 @@
 #include <string.h>
 
 
+
 #include <time.h> //sleep
 #include "signals-interface.h"
 #include "daemon-inerface.h"
@@ -50,6 +51,8 @@ void Daemon::set_sleep_time(unsigned int stime)
     m_sleepSeconds = stime;
 }
 
+
+
 //the starting function - EXPERIMENTAL!!!
 int Daemon::start(int argc, char** argv)
 {
@@ -67,34 +70,6 @@ int Daemon::start(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
-
-#if 0
-    int j;
-    for(j= getdtablesize(); j >=0; --j)
-    {
-        close(j);
-    }
-
-    j = open("/dev/null", O_RDWR);
-    dup(j);
-    dup(j);
-
-    umask(027);
-    chdir(argv[1]);
-
-    int lfp = open(".lockfile.lck", O_RDWR|O_CREAT, 0640);
-    if ( lfp < 0 ){
-        exit(1);
-    } else  { }
-
-    if ( lockf(lfp, F_TLOCK, 0) < 0)
-    {
-        exit(0);
-    } else { }
-#endif
-
-
-
     close(STDIN_FILENO);
     close(STDOUT_FILENO);
     close(STDERR_FILENO);
@@ -107,33 +82,25 @@ int Daemon::start(int argc, char** argv)
     //special init section
     //{
 
-    int msqid;
-    key_t key;
-
-    if ( (key = ftok(".", 'B')) == -1 ) {
-
-     //   exit(1);
-    }
-
-    if ( (msqid = msgget(key, 0644)) == -1) {
-
-      //  exit(1);
-    }
-    //rad some taks
+    char *fifoname = "fifofile";
+    int num, fd;
+    char s[300];
+    fd = open(fifoname, O_RDONLY);
 
 
 
-    //}
     task* ring = NULL;
+
+    FILE* fp = fopen("log.txt", "a+");
+    if ( !fp ) {
+        exit(1);
+    }
+
     do {
+    //fifo section
+        s[num]=0;
+        fputs(s, fp);
 
-
-        //daemon task iterface goes here
-        //todo a class for specific tasks
-        if ( msgrcv(msqid, &msg_task, sizeof(msg_task.work), 0, 0) == -1 ) {
-
-         //   exit(1);
-        }
 
         ring = m_tasks;
         while ( ring != NULL )
@@ -145,11 +112,12 @@ int Daemon::start(int argc, char** argv)
         }
         ring = m_tasks;
 
-        sleep(m_sleepSeconds);
+   //     sleep(m_sleepSeconds);
 
-   } while ( 1 );
+   } while ( (num = read(fd, s, 300)) != -1);
 
-   return 1; //the return 1
+   fclose(fp);
+   return 0; //the return 1
 }
 
 void  Daemon::registerTask(int ID, int (*work)(int, void*), int argc, void *pArg)

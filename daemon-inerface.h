@@ -52,12 +52,7 @@ private:
     struct
     {
         long mtype;
-        struct {
-            char task_name[200];
-            int argc;
-            void* pArgs;
-            int ( *pfoo)(int, void*);
-        } work;
+        char task_name[200];
     } msg_task;
 
 private:
@@ -88,8 +83,10 @@ public:
     virtual ~Daemon(); //if we need derivates
 
     //simple writer
-    static void writer(const char* msg);
 
+    static int fifo_begin(int argc, char** argv);
+
+    static void writer(const char* msg);
     static void set_sleep_time(unsigned int stime);
 
     virtual int start(int argc, char** argv);
