@@ -10,13 +10,37 @@
 #include <string.h>
 
 
-
+#include <pthread.h>
 #include <time.h> //sleep
 #include "signals-interface.h"
 #include "daemon-inerface.h"
 #include "defs.h"
 
+/// statics
+static void fiforeader(void)
+{
 
+    FILE* fp = fopen("log.txt", "a+");
+    if ( !fp ) {
+        exit(1);
+    }
+
+    static char *fifoname = "fifofile";
+    int num, fd;
+    mknod(fifoname, S_IFIFO | 0666, 0);
+    char s[300];
+    fd = open(fifoname, O_RDONLY);
+
+    if  ( (num = read(fd, s, 300)) != -1 ) {
+        fprintf(fp, "\n%s", s);
+
+    } else {
+        fclose(fp);
+    }
+
+}
+
+///
 
 Daemon::Daemon()
 {
@@ -82,26 +106,15 @@ int Daemon::start(int argc, char** argv)
     //special init section
     //{
 
-    char *fifoname = "fifofile";
-    int num, fd;
-    char s[300];
-    fd = open(fifoname, O_RDONLY);
-
 
 
     task* ring = NULL;
 
-    FILE* fp = fopen("log.txt", "a+");
-    if ( !fp ) {
-        exit(1);
-    }
 
     do {
     //fifo section
-        s[num]=0;
-        fputs(s, fp);
 
-
+        fiforeader();
         ring = m_tasks;
         while ( ring != NULL )
         {
@@ -114,9 +127,9 @@ int Daemon::start(int argc, char** argv)
 
    //     sleep(m_sleepSeconds);
 
-   } while ( (num = read(fd, s, 300)) != -1);
+   } while ( 1 );
 
-   fclose(fp);
+
    return 0; //the return 1
 }
 
