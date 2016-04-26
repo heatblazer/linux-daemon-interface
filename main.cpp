@@ -96,9 +96,8 @@ int work4(int a, void* pdata)
 
 int main(int argc, char** argv)
 {
+
     Daemon::set_sleep_time(MIN * 5);
-
-
     Daemon daemon1;
 
 //! IMPORTANT TODO: tasks must be in separate threads
