@@ -22,7 +22,6 @@ HEADERS += \
 
 RESOURCES += rpc/hello.x
 
-
-LIBS += -lusb
+#LIBS += -lusb
 LIBS += -lpthread
 LIBS += -lrpcsvc

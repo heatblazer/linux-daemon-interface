@@ -16,7 +16,7 @@
 #define LINE_80 "------------------------------------------------------------------------\n"
 static void list_usb(void)
 {
-
+#if 0
     fprintf(stdout, "%s", LINE_80);
     fprintf(stdout, "USB devices:\n");
 
@@ -41,6 +41,7 @@ static void list_usb(void)
         }
     }
     fprintf(stdout, "%s", LINE_80);
+#endif
 }
 
 
