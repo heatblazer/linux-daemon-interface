@@ -18,6 +18,8 @@ HEADERS += \
     test-signals.h
 
 
+RESOURCES += rpc/hello.x
 
 LIBS += -lusb
 LIBS += -lpthread
+LIBS += -lrpcsvc

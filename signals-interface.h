@@ -14,7 +14,7 @@ public:
     virtual void   onSigInt(int sig) = 0;
 
     //SIGQUIT
-    virtual void   onSigQuit(int sig) =0;
+    virtual void   onSigQuit(int sig) = 0;
 
     //SIGILL
     virtual void   onSigIll(int sig) = 0;
