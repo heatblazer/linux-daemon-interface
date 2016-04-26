@@ -9,16 +9,19 @@ SOURCES += main.cpp \
     daemon-interface.cpp \
     test-signals.cpp \
     defs.cpp \
-    signals-interface.cpp
+    signals-interface.cpp \
+    watchdog.cpp
 
 HEADERS += \
     daemon-inerface.h \
     signals-interface.h \
     defs.h \
-    test-signals.h
+    test-signals.h \
+    watchdog.h
 
 
 RESOURCES += rpc/hello.x
+
 
 LIBS += -lusb
 LIBS += -lpthread
