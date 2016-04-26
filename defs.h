@@ -16,6 +16,14 @@
 #include <sys/types.h>
 
 
+//access m element from struct st
+#define MYOFFSETOF(st, m) ( (size_t) &(((st*)0)->m))
+
+//find if element is conained in the struct or member
+#define MYCONTAINER_OF(ptr, type, member) (type*) ((char*) (1 ? (ptr) : &((type*)0)->member) - MYOFFSETOF(type, member))
+
+
+
 
 #define ENTER_CRITICAL_SECTION do { \
     static pthread_mutex_t cs =     PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP; \
