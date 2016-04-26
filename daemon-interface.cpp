@@ -32,11 +32,12 @@ static void fiforeader(void)
     fd = open(fifoname, O_RDONLY);
 
     if  ( (num = read(fd, s, 300)) != -1 ) {
+        s[num]=0;
         fprintf(fp, "\n%s", s);
-
-    } else {
-        fclose(fp);
     }
+    //fixed bug with not closing the fptr
+    fclose(fp);
+
 
 }
 
