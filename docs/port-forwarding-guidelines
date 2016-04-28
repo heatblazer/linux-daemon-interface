@@ -1,0 +1,48 @@
+Some basic guidelines on setting up port forwarding from a port on the upstream IP address
+exposed to the WAN to a port in a node in a private network (LAN).
+
+Using the default firmware of the widely-used wifi routers can be risky, as most
+commonly they contain backdoors. The usage of ddwrt and OpenWRT open source
+firmware for networking devices is encouraged when using general purpose wifi
+routers.
+
+1. Retrieve MAC address of the device in your private network to which you would like to
+set port-forwarding to.
+
+This can be achieved via the ifconfig or ip commands.
+
+The identifiers of networking interfaces on a Debian/Ubuntu machine for ethernet
+and wireless ports are prefixed by default as follows:
+
+- eth
+- wlan
+
+Example networking interface names: eth0, wlan0, eth1 and so forth.
+
+The identifiers of networking interfaces on a Debian/Ubuntu machine for ethernet
+and wireless ports are prefixed by default as follows:
+
+- enp
+- wlan
+
+Example networking interface names: enp0s1, wlan0 and so forth.
+
+The MAC address can be found after HWaddr in the ifconfig output.
+
+2. Setup DHCP daemon of router to give a specific predefined IP address to this
+hardware address
+each time an IP address is requested by a networking interface using it.
+In this way if a reboot is needed to be performed, the server in the local
+area network will be granted the same IP address each time.
+
+3. Set port forwarding to a port on this IP address.
+Let say your upstream IP address in the WAN is
+120.134.15.257. You can set port forwarding from the upstream IP
+to one of the ports on the IP address you selected to be
+given to your server each time it requests one(e.g. 192.168.18.19)
+
+120.134.15.257:80 => 192.168.18.19:120
+
+In this way a request to port 80 on 120.134.15.257 in the WAN
+will be port forwarded to port 120 of the interface using
+the IP address 192.168.18.19 on your inner network.
