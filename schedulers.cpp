@@ -116,3 +116,15 @@ void RoundRobin::stop(void)
     }
 }
 
+/**
+ * @brief DELETE ME!!!
+ */
+void RoundRobin::test_delete_me()
+{
+    node* it = *(&m_head);
+    while ( it != NULL ) {
+
+        it = it->next;
+    }
+}
+

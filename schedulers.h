@@ -18,6 +18,7 @@ class RoundRobin
     virtual void start(void);
     virtual void stop(void);
 
+    static void test_delete_me(void);//prints the list delete it
 private:
     //
     static void  atomic_push(node** pNode, void* pData);
