@@ -17,6 +17,8 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 
+//the maximum threads that can be spawned
+#define MAX_NUM_THREADS 1024
 
 //access m element from struct st
 #define MYOFFSETOF(st, m) ( (size_t) &(((st*)0)->m))

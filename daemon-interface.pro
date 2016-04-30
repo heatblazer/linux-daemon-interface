@@ -10,14 +10,16 @@ SOURCES += main.cpp \
     test-signals.cpp \
     defs.cpp \
     signals-interface.cpp \
-    watchdog.cpp
+    watchdog.cpp \
+    schedulers.cpp
 
 HEADERS += \
     daemon-inerface.h \
     signals-interface.h \
     defs.h \
     test-signals.h \
-    watchdog.h
+    watchdog.h \
+    schedulers.h
 
 
 RESOURCES += rpc/hello.x

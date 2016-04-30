@@ -53,13 +53,15 @@ SOURCES       = main.cpp \
 		test-signals.cpp \
 		defs.cpp \
 		signals-interface.cpp \
-		watchdog.cpp 
+		watchdog.cpp \
+		schedulers.cpp 
 OBJECTS       = main.o \
 		daemon-interface.o \
 		test-signals.o \
 		defs.o \
 		signals-interface.o \
-		watchdog.o
+		watchdog.o \
+		schedulers.o
 DIST          = /opt/Qt5.5.1/5.5/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt5.5.1/5.5/gcc_64/mkspecs/common/unix.conf \
 		/opt/Qt5.5.1/5.5/gcc_64/mkspecs/common/linux.conf \
@@ -193,12 +195,14 @@ DIST          = /opt/Qt5.5.1/5.5/gcc_64/mkspecs/features/spec_pre.prf \
 		signals-interface.h \
 		defs.h \
 		test-signals.h \
-		watchdog.h main.cpp \
+		watchdog.h \
+		schedulers.h main.cpp \
 		daemon-interface.cpp \
 		test-signals.cpp \
 		defs.cpp \
 		signals-interface.cpp \
-		watchdog.cpp
+		watchdog.cpp \
+		schedulers.cpp
 QMAKE_TARGET  = test_daemon
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = test_daemon
@@ -555,6 +559,10 @@ signals-interface.o: signals-interface.cpp signals-interface.h
 
 watchdog.o: watchdog.cpp watchdog.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o watchdog.o watchdog.cpp
+
+schedulers.o: schedulers.cpp schedulers.h \
+		defs.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o schedulers.o schedulers.cpp
 
 ####### Install
 
