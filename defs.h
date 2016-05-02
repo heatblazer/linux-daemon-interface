@@ -17,6 +17,22 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 
+
+#ifdef _MSC_VER
+# include <intrin.h>
+# define CAS(ptr, oldval, newval) \
+    _InterlockedCompareExchange(ptr, newval, oldval)
+#elif __GNUC__
+# if __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 1)
+#  error "requires GCC 4.1 or greater"
+# endif
+# define CAS(ptr, oldval, newval) \
+    __sync_val_compare_and_swap(ptr, oldval, newval)
+#else
+# error "CAS not supported on this platform"
+#endif
+
+
 //the maximum threads that can be spawned
 #define MAX_NUM_THREADS 1024
 
