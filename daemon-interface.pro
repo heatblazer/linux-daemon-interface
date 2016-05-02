@@ -3,6 +3,7 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 
+DESTDIR = build
 TARGET = test_daemon
 
 SOURCES += main.cpp \
