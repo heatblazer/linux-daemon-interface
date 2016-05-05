@@ -7,7 +7,6 @@
 
 //test tasks
 ///1. list new usb devices when plugged
-#include <usb.h>
 #include <stdio.h>
 
 //test some d-bus
