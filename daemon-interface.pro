@@ -12,7 +12,8 @@ SOURCES += main.cpp \
     defs.cpp \
     signals-interface.cpp \
     watchdog.cpp \
-    schedulers.cpp
+    schedulers.cpp \
+    socket.cpp
 
 HEADERS += \
     daemon-inerface.h \
@@ -20,11 +21,19 @@ HEADERS += \
     defs.h \
     test-signals.h \
     watchdog.h \
-    schedulers.h
+    schedulers.h \
+    socket.h
 
 
 RESOURCES += rpc/hello.x
 
 #LIBS += -lusb
+#for threads
 LIBS += -lpthread
+
+#for rpc services
 LIBS += -lrpcsvc
+
+#for sockets
+LIBS += -lnsl
+LIBS += -lresolv

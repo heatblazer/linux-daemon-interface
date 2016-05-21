@@ -2,6 +2,7 @@
 #ifndef DEFS
 #define DEFS
 
+// unix standarts
 #include <unistd.h>
 #include <time.h>
 #include <stdio.h>
@@ -9,15 +10,20 @@
 #include <pthread.h>
 #include <stddef.h>
 
-//link with libxml2 too
-
-
+// for rpc messageing
 #include <sys/msg.h>
 #include <sys/ipc.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 
+// socket programming
+#include <sys/socket.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
 
+
+// msvc atomics operations
 #ifdef _MSC_VER
 # include <intrin.h>
 # define CAS(ptr, oldval, newval) \

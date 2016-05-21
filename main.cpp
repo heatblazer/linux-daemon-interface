@@ -1,8 +1,16 @@
+// C++
 #include <iostream>
-#include "daemon-inerface.h"
-#include "defs.h"
+
+// ANIS C
 #include <stdlib.h>
 #include <pthread.h>
+
+// own headers
+#include "daemon-inerface.h"
+#include "defs.h"
+#include "socket.h"
+
+
 
 
 //test tasks
@@ -98,8 +106,8 @@ int work4(int a, void* pdata)
 int main(int argc, char** argv)
 {
 
-    Daemon::set_sleep_time(MIN * 5);
-    Daemon daemon1;
+//    Daemon::set_sleep_time(MIN * 5);
+//    Daemon daemon1;
 
 //! IMPORTANT TODO: tasks must be in separate threads
 //!
@@ -114,9 +122,9 @@ int main(int argc, char** argv)
 //TODO!
 //register before start, for more flexible interface use
 // register and deregister in separate threads
-     daemon1.start(argc, argv);
+//     daemon1.start(argc, argv);
 
 
-    return 0;
+    return Socket::test_main(argc, argv);
 }
 
