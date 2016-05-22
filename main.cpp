@@ -1,3 +1,6 @@
+// Qt
+#include <QtCore>
+
 // C++
 #include <iostream>
 
@@ -8,9 +11,7 @@
 // own headers
 #include "daemon-inerface.h"
 #include "defs.h"
-#include "socket.h"
-
-
+#include "qtsocket.h"
 
 
 //test tasks
@@ -124,7 +125,13 @@ int main(int argc, char** argv)
 // register and deregister in separate threads
 //     daemon1.start(argc, argv);
 
+    QCoreApplication ap(argc, argv);
+    mrsockets::Socket s;
+    s.init();
+    s.init();
+    s.connectToHost("google.com", 80);
+    s.send("");
 
-    return Socket::test_main(argc, argv);
+    return ap.exec();
 }
 

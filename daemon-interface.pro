@@ -1,8 +1,12 @@
-TEMPLATE = app
-CONFIG += console c++11
-CONFIG -= app_bundle
-CONFIG -= qt
+QT += core
+QT += network
 
+
+CONFIG += c++11
+CONFIG += console
+
+
+TARGET = test_daemon
 
 SOURCES += main.cpp \
     daemon-interface.cpp \
@@ -11,7 +15,7 @@ SOURCES += main.cpp \
     signals-interface.cpp \
     watchdog.cpp \
     schedulers.cpp \
-    socket.cpp
+    qtsocket.cpp
 
 HEADERS += \
     daemon-inerface.h \
@@ -20,18 +24,12 @@ HEADERS += \
     test-signals.h \
     watchdog.h \
     schedulers.h \
-    socket.h
+    qtsocket.h
 
 
-RESOURCES += rpc/hello.x
-
-#LIBS += -lusb
 #for threads
 LIBS += -lpthread
 
-#for rpc services
-LIBS += -lrpcsvc
-
-#for sockets
+#for C sockets
 LIBS += -lnsl
 LIBS += -lresolv
