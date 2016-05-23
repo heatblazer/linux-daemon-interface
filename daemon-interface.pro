@@ -6,6 +6,9 @@ CONFIG += c++11
 CONFIG += console
 
 
+
+DEFINES += USE_QT_SOCKETS
+
 TARGET = test_daemon
 
 SOURCES += main.cpp \
@@ -15,7 +18,9 @@ SOURCES += main.cpp \
     signals-interface.cpp \
     watchdog.cpp \
     schedulers.cpp \
-    qtsocket.cpp
+    qtsocket.cpp \
+    csocket.cpp \
+    cthread.cpp
 
 HEADERS += \
     daemon-inerface.h \
@@ -24,7 +29,9 @@ HEADERS += \
     test-signals.h \
     watchdog.h \
     schedulers.h \
-    qtsocket.h
+    qtsocket.h \
+    csocket.h \
+    cthread.h
 
 
 #for threads

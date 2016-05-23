@@ -7,7 +7,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <signal.h>
-#include <pthread.h>
+#include <cthread.h>
 #include <stddef.h>
 
 // for rpc messageing
@@ -21,6 +21,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+
 
 
 // msvc atomics operations

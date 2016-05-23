@@ -1,17 +1,23 @@
+// own headers
+#include "daemon-inerface.h"
+#include "defs.h"
+#include "cthread.h"
+#include "csocket.h"
+#include "qtsocket.h"
+
+// use Qt TcpSockets
+#ifdef USE_QT_SOCKET
 // Qt
 #include <QtCore>
-
+#else
+#endif
 // C++
 #include <iostream>
 
 // ANIS C
 #include <stdlib.h>
-#include <pthread.h>
+#include <cthread.h>
 
-// own headers
-#include "daemon-inerface.h"
-#include "defs.h"
-#include "qtsocket.h"
 
 
 //test tasks
@@ -125,6 +131,8 @@ int main(int argc, char** argv)
 // register and deregister in separate threads
 //     daemon1.start(argc, argv);
 
+
+#if 0
     QCoreApplication ap(argc, argv);
     mrsockets::Socket s;
     s.init();
@@ -133,5 +141,16 @@ int main(int argc, char** argv)
     s.send("");
 
     return ap.exec();
+#endif
+
+#if 0
+    CXThread cx;
+    cx.init();
+#endif
+    CSocket s;
+    s.Connect("www.google.com", "80");
+
+    return 0;
+
 }
 
