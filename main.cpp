@@ -148,7 +148,7 @@ int main(int argc, char** argv)
     cx.init();
 #endif
     CSocket s;
-    s.Connect("www.google.com", "80");
+    s.connect("www.google.com", "80");
 
     return 0;
 

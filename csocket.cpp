@@ -47,7 +47,7 @@ char*   CSocket::getIPByName(const char *host)
 }
 
 
-int    CSocket::Connect(const char *host, const char* port)
+int    CSocket::connect(const char *host, const char* port)
 {
 
     printf("%s resloved to %s\n", host, this->getIPByName(host));
