@@ -26,6 +26,7 @@ void CXThread::init()
 
 void* CXThread::run(void* args)
 {
+    // register the loop
     while (1) {
     }
 }
