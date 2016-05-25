@@ -1,7 +1,11 @@
 #include "csocket.h"
 
+// ANSI C
 #include <string.h>
 #include <stdlib.h>
+
+
+
 
 CSocket::CSocket()
 {
@@ -47,6 +51,16 @@ char*   CSocket::getIPByName(const char *host)
 }
 
 
+void*    CSocket::run(void *pdata)
+{
+    CSocket* s = (CSocket*) pdata;
+    while (1) {
+
+    }
+
+}
+
+
 int    CSocket::Connect(const char *host, const char* port)
 {
 
@@ -55,7 +69,8 @@ int    CSocket::Connect(const char *host, const char* port)
         return -1;
     }
 
-    m_address.ipv4.sin_addr.s_addr = inet_addr(getIPByName(host));
+
+    m_address.ipv4.sin_addr.s_addr = inet_addr(host);
     m_address.ipv4.sin_family = AF_INET;
     m_address.ipv4.sin_port = htons((uint16_t) atoi(port));
 
@@ -64,7 +79,26 @@ int    CSocket::Connect(const char *host, const char* port)
         return -1;
     }
 
+
+    // move the threads elsewhere, since we`ll stick here
+    // before we got loged in
+    m_thread.init(256 * 1024, CSocket::run, this);
+    m_thread.join();
+
+
     return 0;
+}
+
+//! TODO: implement
+//! \brief CSocket::Bind
+//! \param host
+//! \param port
+//! \return
+//!
+int CSocket::Bind(const char *host, const char* port)
+{
+    return -1;
+
 }
 
 int CSocket::Send(const char *msg)
@@ -81,39 +115,15 @@ int CSocket::Recieve()
 {
     char buff[3000] = {0};
 
-    int res = 0;
     if (recv(m_socketFd, buff, sizeof(buff), 0) < 0) {
         return -1;
     }
     // this is test - remove it later!!!
     puts(buff);
 
+
 }
 
 
-int CSocket::Bind(uint16_t port)
-{
-    struct sockaddr_in client;
-    int new_socket, c;
-    m_address.ipv4.sin_family = AF_INET;
-    m_address.ipv4.sin_addr.s_addr = INADDR_ANY;
-    m_address.ipv4.sin_port = htons(port);
 
-    if (bind(m_socketFd, (struct sockaddr*)&m_address.ipv4,
-             sizeof(m_address.ipv4)) < 0) {
-        return -1;
-    }
-
-    listen(m_socketFd, 3);
-
-    c = sizeof(struct sockaddr_in);
-    new_socket = accept(m_socketFd, (struct sockaddr*)&client,
-                        (socklen_t*)&c);
-    if (new_socket < 0) {
-        return -1;
-    }
-
-    puts("Connection accepted");
-    return 0;
-}
 

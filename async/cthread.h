@@ -4,6 +4,8 @@
 #include <pthread.h>
 
 
+typedef void* (*pthread_cb)(void*);
+
 class CXThread
 {
 
@@ -11,13 +13,17 @@ public:
     CXThread();
     virtual ~CXThread();
 
-    void init(void /* TODO add parameters */);
-    static void* run(void* args);
+    void init(size_t stackSize, pthread_cb foo, void* userData);
+    void join(void);
 
 
 protected:
 private:
-    pthread_t m_thread;
+    pthread_cb      m_cb;
+    pthread_t       m_thread;
+    pthread_attr_t  m_attr;
+    void*           p_usrData;
+
 
 };
 

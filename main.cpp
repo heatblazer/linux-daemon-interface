@@ -146,10 +146,9 @@ int main(int argc, char** argv)
     cx.init();
 #endif
     CSocket s;
-    s.Connect("www.google.com", "80");
-    s.Send("GET / HTTP/1.1\r\n\r\n");
-    s.Recieve();
-    s.Bind(8888);
+    s.Connect("192.168.32.89", "5038");
+
+
     return 0;
 
 }
