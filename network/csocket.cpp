@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 
-
+bool CSocket::m_isRunning = true;
 
 CSocket::CSocket()
 {
@@ -54,8 +54,10 @@ char*   CSocket::getIPByName(const char *host)
 void*    CSocket::run(void *pdata)
 {
     CSocket* s = (CSocket*) pdata;
-    while (1) {
-
+    while (CSocket::m_isRunning) {
+        // test
+        s->Send("Action: Ping\r\n\r\n");
+        s->Recieve();
     }
 
 }
@@ -110,7 +112,10 @@ int CSocket::Send(const char *msg)
     return 0;
 }
 
-
+//! the buff is fixed, which is OK ( see in the web usage of recv(...) )
+//! \brief CSocket::Recieve
+//! \return -1 on fail 0 on success
+//!
 int CSocket::Recieve()
 {
     char buff[3000] = {0};
@@ -120,8 +125,7 @@ int CSocket::Recieve()
     }
     // this is test - remove it later!!!
     puts(buff);
-
-
+    return 0;
 }
 
 

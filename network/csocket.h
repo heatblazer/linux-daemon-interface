@@ -24,7 +24,9 @@ public:
 
     static void*    run(void* pdata);
 
-
+public:
+    // static control variable
+    static bool     m_isRunning;
 private:
 
     char*   getIPByName(const char* host);
