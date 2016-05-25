@@ -18,9 +18,9 @@ SOURCES += main.cpp \
     signals-interface.cpp \
     watchdog.cpp \
     schedulers.cpp \
-    qtsocket.cpp \
-    csocket.cpp \
-    cthread.cpp
+    network/qtsocket.cpp \
+    network/csocket.cpp \
+    async/cthread.cpp
 
 HEADERS += \
     daemon-inerface.h \
@@ -29,9 +29,9 @@ HEADERS += \
     test-signals.h \
     watchdog.h \
     schedulers.h \
-    qtsocket.h \
-    csocket.h \
-    cthread.h
+    network/qtsocket.h \
+    network/csocket.h \
+    async/cthread.h
 
 
 #for threads

@@ -7,7 +7,6 @@
 #include <time.h>
 #include <stdio.h>
 #include <signal.h>
-#include <cthread.h>
 #include <stddef.h>
 
 // for rpc messageing

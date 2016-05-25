@@ -1,9 +1,8 @@
 // own headers
 #include "daemon-inerface.h"
 #include "defs.h"
-#include "cthread.h"
-#include "csocket.h"
-#include "qtsocket.h"
+#include "async/cthread.h"
+#include "network/csocket.h"
 
 // use Qt TcpSockets
 #ifdef USE_QT_SOCKET
@@ -16,7 +15,6 @@
 
 // ANIS C
 #include <stdlib.h>
-#include <cthread.h>
 
 
 
@@ -148,8 +146,10 @@ int main(int argc, char** argv)
     cx.init();
 #endif
     CSocket s;
-    s.connect("www.google.com", "80");
-
+    s.Connect("www.google.com", "80");
+    s.Send("GET / HTTP/1.1\r\n\r\n");
+    s.Recieve();
+    s.Bind(8888);
     return 0;
 
 }
