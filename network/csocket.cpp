@@ -19,7 +19,11 @@ CSocket::~CSocket()
 
 }
 
-
+//! NOTE Unused for now
+//! \brief CSocket::get_in_address
+//! \param addr
+//! \return
+//!
 void*   CSocket::get_in_address(struct sockaddr *addr)
 {
     if (addr->sa_family == AF_INET) {
@@ -29,7 +33,11 @@ void*   CSocket::get_in_address(struct sockaddr *addr)
     }
 }
 
-
+//! Resolve host name by name ex. google.com
+//! \brief CSocket::getIPByName
+//! \param host
+//! \return
+//!
 char*   CSocket::getIPByName(const char *host)
 {
     static char ip[100] = {0};
@@ -52,7 +60,12 @@ char*   CSocket::getIPByName(const char *host)
 }
 
 
-
+//! Sicket init and connect also init the thread
+//! \brief CSocket::Connect
+//! \param host
+//! \param port
+//! \return
+//!
 int    CSocket::Connect(const char *host, const char* port)
 {
 
@@ -60,7 +73,6 @@ int    CSocket::Connect(const char *host, const char* port)
     if (m_socketFd < 0) {
         return -1;
     }
-
 
     m_address.ipv4.sin_addr.s_addr = inet_addr(host);
     m_address.ipv4.sin_family = AF_INET;
@@ -76,7 +88,6 @@ int    CSocket::Connect(const char *host, const char* port)
     // before we got loged in
     m_thread.init(256 * 1024, CSocket::run, this);
     m_thread.join();
-
 
     return 0;
 }
@@ -94,6 +105,11 @@ int CSocket::Bind(const char *host, const char* port)
 }
 
 
+//! The function to be pushed on the call stack
+//! \brief CSocket::_privateSend
+//! \param msg
+//! \return
+//!
 int CSocket::_privateSend(const char *msg)
 {
     if (send(m_socketFd, msg, strlen(msg), 0) < 0) {
@@ -102,14 +118,16 @@ int CSocket::_privateSend(const char *msg)
 
 }
 
-
+//! push the private function to the call list
+//! \brief CSocket::Send
+//! \param msg
+//! \return
+//!
 int CSocket::Send(const char *msg)
 {
-
     push(_privateSend, (void*)msg);
     return 0;
 }
-
 
 
 
@@ -126,12 +144,12 @@ int CSocket::Recieve()
     }
     // this is test - remove it later!!!
     puts(buff);
+    puts("\n");
     return 0;
 }
 
 
 // privates inner
-
 void CSocket::push(int (*cb)(const char *), void *pdata)
 {
     struct CSocket::node* pnode = (struct CSocket::node*)
@@ -167,15 +185,25 @@ void*    CSocket::run(void *pdata)
 {
     CSocket* s = (CSocket*) pdata;
     s->Send("Action: Login\nUsername: joro\nSecret: sopa123\n\n");
+    static pthread_mutex_t mutex;
+    pthread_mutex_init(&mutex, 0);
+
     while (CSocket::m_isRunning) {
         // pop the stack and call it
+        if (!m_isRunning) {
+            break;
+        }
+        // use mutex locks for now
+        pthread_mutex_lock(&mutex);
+
         struct CSocket::node* pnode = s->pop();
         if (pnode != 0) {
             pnode->cb((char*)pnode->userdata);
-            s->Recieve();
         }
-    }
+         s->Recieve();
 
+        pthread_mutex_unlock(&mutex);
+    }
 }
 
 
