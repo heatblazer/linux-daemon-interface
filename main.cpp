@@ -15,6 +15,7 @@
 
 // ANIS C
 #include <stdlib.h>
+#include <time.h>
 
 
 
@@ -145,9 +146,21 @@ int main(int argc, char** argv)
     CXThread cx;
     cx.init();
 #endif
+    srand(time(0));
+
     CSocket s;
+
     s.Connect("192.168.32.89", "5038");
 
+    for(;;) {
+
+       int i = rand() % 100;
+
+       s.Send("Action: Ping\n\n");
+
+       usleep(700);
+
+    }
 
     return 0;
 

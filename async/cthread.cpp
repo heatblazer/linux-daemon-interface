@@ -27,14 +27,18 @@ void CXThread::init(size_t stackSize, pthread_cb foo, void* userData)
        pthread_attr_init(&m_attr);
        pthread_attr_setstacksize(&m_attr, stackSize);
        pthread_create(&m_thread, &m_attr, m_cb, userData);
-
+       pthread_detach(m_thread);
    } // never call init second time
 }
 
 
 void CXThread::join()
 {
-    pthread_join(m_thread, NULL);
+    static int oneshot = 0;
+    if (oneshot < 1) {
+        oneshot = 1;
+        pthread_join(m_thread, NULL);
+    }
 }
 
 

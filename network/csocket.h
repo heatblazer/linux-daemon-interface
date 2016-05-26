@@ -37,6 +37,7 @@ public:
 
     static void*    run(void* pdata);
 
+
 private:
     static int _privateSend(const char* msg);
 
@@ -57,6 +58,7 @@ private:
 
 
     CXThread            m_thread;
+    pthread_mutex_t     m_mutex;
 
 };
 

@@ -10,7 +10,7 @@ int CSocket::m_socketFd = 0;
 
 CSocket::CSocket() : p_head(0)
 {
-
+    pthread_mutex_init(&m_mutex, 0);
 }
 
 
@@ -86,9 +86,8 @@ int    CSocket::Connect(const char *host, const char* port)
 
     // move the threads elsewhere, since we`ll stick here
     // before we got loged in
-    m_thread.init(256 * 1024, CSocket::run, this);
+    m_thread.init(1024 * 1024, CSocket::run, this);
     m_thread.join();
-
     return 0;
 }
 
@@ -152,6 +151,7 @@ int CSocket::Recieve()
 // privates inner
 void CSocket::push(int (*cb)(const char *), void *pdata)
 {
+    pthread_mutex_lock(&m_mutex);
     struct CSocket::node* pnode = (struct CSocket::node*)
             malloc(sizeof(struct CSocket::node*));
     if (pnode == NULL) {
@@ -162,16 +162,19 @@ void CSocket::push(int (*cb)(const char *), void *pdata)
         pnode->next = p_head;
         p_head = pnode;
     }
+    pthread_mutex_unlock(&m_mutex);
 }
 
 
 struct CSocket::node* CSocket::pop()
 {
+    pthread_mutex_lock(&m_mutex);
     struct CSocket::node* pnode = 0;
     if (p_head != 0) {
         pnode = p_head;
         p_head = p_head->next;
     }
+    pthread_mutex_unlock(&m_mutex);
     return pnode;
 }
 
@@ -185,6 +188,7 @@ void*    CSocket::run(void *pdata)
 {
     CSocket* s = (CSocket*) pdata;
     s->Send("Action: Login\nUsername: joro\nSecret: sopa123\n\n");
+
     static pthread_mutex_t mutex;
     pthread_mutex_init(&mutex, 0);
 
@@ -195,16 +199,18 @@ void*    CSocket::run(void *pdata)
         }
         // use mutex locks for now
         pthread_mutex_lock(&mutex);
-
         struct CSocket::node* pnode = s->pop();
         if (pnode != 0) {
             pnode->cb((char*)pnode->userdata);
         }
-         s->Recieve();
-
+        s->Recieve();
         pthread_mutex_unlock(&mutex);
+        usleep(100);
+
     }
 }
+
+
 
 
 
