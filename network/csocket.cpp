@@ -87,7 +87,7 @@ int    CSocket::Connect(const char *host, const char* port)
     // move the threads elsewhere, since we`ll stick here
     // before we got loged in
     m_thread.init(1024 * 1024, CSocket::run, this);
-    m_thread.join();
+
     return 0;
 }
 
@@ -151,7 +151,8 @@ int CSocket::Recieve()
 // privates inner
 void CSocket::push(int (*cb)(const char *), void *pdata)
 {
-    pthread_mutex_lock(&m_mutex);
+//    pthread_mutex_lock(&m_mutex);
+    ENTER_CRITICAL_SECTION
     struct CSocket::node* pnode = (struct CSocket::node*)
             malloc(sizeof(struct CSocket::node*));
     if (pnode == NULL) {
@@ -162,19 +163,23 @@ void CSocket::push(int (*cb)(const char *), void *pdata)
         pnode->next = p_head;
         p_head = pnode;
     }
-    pthread_mutex_unlock(&m_mutex);
+    //pthread_mutex_unlock(&m_mutex);
+    LEAVE_CRITICAL_SECTION
 }
 
 
 struct CSocket::node* CSocket::pop()
 {
-    pthread_mutex_lock(&m_mutex);
+ //   pthread_mutex_lock(&m_mutex);
     struct CSocket::node* pnode = 0;
+    ENTER_CRITICAL_SECTION
+
     if (p_head != 0) {
         pnode = p_head;
         p_head = p_head->next;
     }
-    pthread_mutex_unlock(&m_mutex);
+//    pthread_mutex_unlock(&m_mutex);
+    LEAVE_CRITICAL_SECTION
     return pnode;
 }
 
@@ -205,8 +210,6 @@ void*    CSocket::run(void *pdata)
         }
         s->Recieve();
         pthread_mutex_unlock(&mutex);
-        usleep(100);
-
     }
 }
 
