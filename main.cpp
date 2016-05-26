@@ -156,9 +156,9 @@ int main(int argc, char** argv)
 
        int i = rand() % 100;
        // 20 percent chacne
-       if (i > 70) {
-         s.Send("Action: Ping\n\n");
-       }
+
+      s.Send("Action: Ping\n\n");
+
        usleep(100);
 
     }

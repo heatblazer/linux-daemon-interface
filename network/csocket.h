@@ -22,7 +22,7 @@ private:
     struct node*   p_head;
 
     void push(int (*cb)(const char*), void *pdata);
-    struct node* pop(void);
+    void pop(struct node** pRet);
 
 public:
     CSocket();

@@ -168,19 +168,22 @@ void CSocket::push(int (*cb)(const char *), void *pdata)
 }
 
 
-struct CSocket::node* CSocket::pop()
+void CSocket::pop(struct CSocket::node** pRet)
 {
- //   pthread_mutex_lock(&m_mutex);
-    struct CSocket::node* pnode = 0;
     ENTER_CRITICAL_SECTION
 
+    struct CSocket::node* pnode = 0;
     if (p_head != 0) {
         pnode = p_head;
-        p_head = p_head->next;
+        (*pRet) = pnode;
+        if (p_head != 0 ) {
+            p_head = p_head->next;
+            free(p_head);
+        }
+
     }
-//    pthread_mutex_unlock(&m_mutex);
     LEAVE_CRITICAL_SECTION
-    return pnode;
+
 }
 
 
@@ -204,11 +207,12 @@ void*    CSocket::run(void *pdata)
         }
         // use mutex locks for now
         pthread_mutex_lock(&mutex);
-        struct CSocket::node* pnode = s->pop();
+        struct CSocket::node* pnode = 0;
+        s->pop(&pnode);
         if (pnode != 0) {
             pnode->cb((char*)pnode->userdata);
+            s->Recieve();
         }
-        s->Recieve();
         pthread_mutex_unlock(&mutex);
     }
 }
