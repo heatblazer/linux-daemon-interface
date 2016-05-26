@@ -150,18 +150,18 @@ int main(int argc, char** argv)
 
     CSocket s;
 
-    s.Connect("192.168.32.89", "5038");
-
+    //s.Connect("192.168.32.89", "5038");
+    s.Bind("192.168.32.89", "5038");
+    /*
     for(;;) {
 
        int i = rand() % 100;
        // 20 percent chacne
       s.Send("Action: Ping\n\n");
-
-       usleep(0);
+      usleep(0);
 
     }
-
+*/
     return 0;
 
 }

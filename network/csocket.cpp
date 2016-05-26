@@ -6,11 +6,11 @@
 
 
 bool CSocket::m_isRunning = true;
-int CSocket::m_socketFd = 0;
+int CSocket::m_sockets[CSocket::ClienServer::MAX]={0};
 
 CSocket::CSocket() : p_head(0)
 {
-    pthread_mutex_init(&m_mutex, 0);
+
 }
 
 
@@ -69,23 +69,25 @@ char*   CSocket::getIPByName(const char *host)
 int    CSocket::Connect(const char *host, const char* port)
 {
 
-    m_socketFd = socket(AF_INET, SOCK_STREAM, 0);
-    if (m_socketFd < 0) {
+    m_sockets[ClienServer::CLIENT] = socket(AF_INET, SOCK_STREAM, 0);
+    if (m_sockets[ClienServer::CLIENT] < 0) {
         return -1;
     }
 
-    m_address.ipv4.sin_addr.s_addr = inet_addr(host);
-    m_address.ipv4.sin_family = AF_INET;
-    m_address.ipv4.sin_port = htons((uint16_t) atoi(port));
+    m_address[ClienServer::CLIENT].ipv4.sin_addr.s_addr = inet_addr(host);
+    m_address[ClienServer::CLIENT].ipv4.sin_family = AF_INET;
+    m_address[ClienServer::CLIENT].ipv4.sin_port = htons((uint16_t) atoi(port));
 
-    if (connect(m_socketFd, (struct sockaddr*)&m_address.ipv4,
-                sizeof(m_address.ipv4)) < 0 ) {
+    if (connect(m_sockets[ClienServer::CLIENT],
+                (struct sockaddr*)&m_address[ClienServer::CLIENT].ipv4,
+                sizeof(m_address[ClienServer::CLIENT].ipv4)) < 0 ) {
         return -1;
     }
 
 
     // move the threads elsewhere, since we`ll stick here
     // before we got loged in
+    //             stack size, runnable,   usrdata, priority //
     m_thread.init(1024 * 1024, CSocket::run, this, 10);
 
     return 0;
@@ -99,8 +101,50 @@ int    CSocket::Connect(const char *host, const char* port)
 //!
 int CSocket::Bind(const char *host, const char* port)
 {
-    return -1;
 
+    m_sockets[ClienServer::CLIENT] = socket(AF_INET, SOCK_STREAM, 0);
+
+    if (m_sockets[ClienServer::CLIENT] < 0) {
+        return -1;
+    }
+
+    bzero((char*)&m_address[ClienServer::CLIENT].ipv4,
+            sizeof(m_address[ClienServer::CLIENT].ipv4) );
+
+    m_address[ClienServer::CLIENT].ipv4.sin_family = AF_INET;
+    m_address[ClienServer::CLIENT].ipv4.sin_addr.s_addr = INADDR_ANY;
+    m_address[ClienServer::CLIENT].ipv4.sin_port = htons((uint16_t) atoi(port));
+
+    if (bind(m_sockets[ClienServer::CLIENT],
+             (struct sockaddr*) &m_address[ClienServer::CLIENT].ipv4,
+             sizeof(m_address[ClienServer::CLIENT].ipv4)) < 0) {
+        return -1;
+    }
+
+    listen(m_sockets[ClienServer::CLIENT], 5);
+    int clilen = sizeof(m_sockets[ClienServer::CLIENT]);
+
+    m_sockets[ClienServer::SERVER] =
+            accept(m_sockets[ClienServer::CLIENT],
+                    (struct sockaddr*)&m_address[ClienServer::SERVER],
+                    (socklen_t*)&clilen);
+
+    if (m_sockets[ClienServer::SERVER] < 0) {
+        return -1;
+    }
+
+    char buffer[256]={0}; // good practices
+    bzero(buffer, 256);
+
+    if(read(m_sockets[ClienServer::SERVER], buffer, 256) < 0) {
+        return -1;
+    }
+
+    if (write(m_sockets[ClienServer::SERVER], "Got your message", 20) < 0) {
+        return -1;
+    }
+
+    return 0;
 }
 
 
@@ -112,7 +156,7 @@ int CSocket::Bind(const char *host, const char* port)
 int CSocket::_privateSend(const char *msg)
 {
     ENTER_CRITICAL_SECTION
-    if (send(m_socketFd, msg, strlen(msg), 0) < 0) {
+    if (send(m_sockets[ClienServer::CLIENT], msg, strlen(msg), 0) < 0) {
         return -1;
     }
     LEAVE_CRITICAL_SECTION
@@ -140,7 +184,7 @@ int CSocket::Recieve()
     ENTER_CRITICAL_SECTION
     char buff[3000] = {0};
 
-    if (recv(m_socketFd, buff, sizeof(buff), 0) < 0) {
+    if (recv(m_sockets[ClienServer::CLIENT], buff, sizeof(buff), 0) < 0) {
         return -1;
     }
     // this is test - remove it later!!!

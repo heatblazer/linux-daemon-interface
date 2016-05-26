@@ -11,6 +11,8 @@
 
 class CSocket
 {
+
+// custom stack based interface
 private:
     // simple adding mechanism for a callstack
     struct node {
@@ -28,33 +30,42 @@ public:
     CSocket();
     virtual ~CSocket();
 
-    void*   get_in_address(struct sockaddr* addr);
-    int     Connect(const char* host, const char *port);
-    int     Bind(const char* host, const char *port);
 
-    int     Send(const char* msg);
-    int     Recieve(void);
+    virtual void*   get_in_address(struct sockaddr* addr);
+    virtual int     Connect(const char* host, const char *port);
+    virtual int     Bind(const char* host, const char *port);
 
+    virtual int     Send(const char* msg);
+    virtual int     Recieve(void);
+
+    //! The thread callback
+    //! \brief run
+    //! \param pdata
+    //! \return
+    //!
     static void*    run(void* pdata);
 
-
-private:
-    static int _privateSend(const char* msg);
 
 public:
     // static control variable
     static bool     m_isRunning;
 private:
+
+    static int _privateSend(const char* msg);
     char*   getIPByName(const char* host);
 
 protected:
 private:
 
-    static int     m_socketFd;
+    enum ClienServer { CLIENT, SERVER, MAX };
+
+    static int     m_sockets[ClienServer::MAX];
+
+    // ipv4 or ipv6
     union {
         sockaddr_in     ipv4;
         sockaddr_in6    ipv6;
-    } m_address;
+    } m_address[ClienServer::MAX];
 
 
     CXThread            m_thread;
