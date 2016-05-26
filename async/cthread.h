@@ -13,7 +13,7 @@ public:
     CXThread();
     virtual ~CXThread();
 
-    void init(size_t stackSize, pthread_cb foo, void* userData);
+    void init(size_t stackSize, pthread_cb foo, void* userData, int prio);
     void join(void);
 
 

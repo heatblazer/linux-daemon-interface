@@ -15,16 +15,28 @@ CXThread::~CXThread()
 
 
 
-void CXThread::init(size_t stackSize, pthread_cb foo, void* userData)
+void CXThread::init(size_t stackSize, pthread_cb foo, void* userData, int prio)
 {
    static int is_init = 0;
    if (is_init == 0) {
        is_init = 1;
         if (stackSize <= 0) {
             stackSize = 128 * 1024; // 128 k stack
-        }
+       }
+       if (prio < 1) {
+           prio = 15;
+       }
+
        m_cb = foo;
        pthread_attr_init(&m_attr);
+
+       // set priority
+       sched_param param;
+       pthread_attr_getschedparam(&m_attr, &param);
+       param.__sched_priority = prio;
+       pthread_attr_setschedparam(&m_attr, &param);
+
+       // set stack size
        pthread_attr_setstacksize(&m_attr, stackSize);
        pthread_create(&m_thread, &m_attr, m_cb, userData);
        pthread_detach(m_thread);

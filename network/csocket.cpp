@@ -86,7 +86,7 @@ int    CSocket::Connect(const char *host, const char* port)
 
     // move the threads elsewhere, since we`ll stick here
     // before we got loged in
-    m_thread.init(1024 * 1024, CSocket::run, this);
+    m_thread.init(1024 * 1024, CSocket::run, this, 10);
 
     return 0;
 }
@@ -111,10 +111,11 @@ int CSocket::Bind(const char *host, const char* port)
 //!
 int CSocket::_privateSend(const char *msg)
 {
+    ENTER_CRITICAL_SECTION
     if (send(m_socketFd, msg, strlen(msg), 0) < 0) {
         return -1;
     }
-
+    LEAVE_CRITICAL_SECTION
 }
 
 //! push the private function to the call list
@@ -136,6 +137,7 @@ int CSocket::Send(const char *msg)
 //!
 int CSocket::Recieve()
 {
+    ENTER_CRITICAL_SECTION
     char buff[3000] = {0};
 
     if (recv(m_socketFd, buff, sizeof(buff), 0) < 0) {
@@ -144,6 +146,7 @@ int CSocket::Recieve()
     // this is test - remove it later!!!
     puts(buff);
     puts("\n");
+    LEAVE_CRITICAL_SECTION
     return 0;
 }
 
@@ -171,7 +174,6 @@ void CSocket::push(int (*cb)(const char *), void *pdata)
 void CSocket::pop(struct CSocket::node** pRet)
 {
     ENTER_CRITICAL_SECTION
-
     struct CSocket::node* pnode = 0;
     if (p_head != 0) {
         pnode = p_head;
@@ -179,8 +181,8 @@ void CSocket::pop(struct CSocket::node** pRet)
         if (p_head != 0 ) {
             p_head = p_head->next;
             free(p_head);
+            p_head = 0;
         }
-
     }
     LEAVE_CRITICAL_SECTION
 
@@ -197,23 +199,20 @@ void*    CSocket::run(void *pdata)
     CSocket* s = (CSocket*) pdata;
     s->Send("Action: Login\nUsername: joro\nSecret: sopa123\n\n");
 
-    static pthread_mutex_t mutex;
-    pthread_mutex_init(&mutex, 0);
-
     while (CSocket::m_isRunning) {
         // pop the stack and call it
         if (!m_isRunning) {
             break;
         }
         // use mutex locks for now
-        pthread_mutex_lock(&mutex);
         struct CSocket::node* pnode = 0;
         s->pop(&pnode);
         if (pnode != 0) {
             pnode->cb((char*)pnode->userdata);
             s->Recieve();
         }
-        pthread_mutex_unlock(&mutex);
+
+        usleep(10);
     }
 }
 
