@@ -7,34 +7,49 @@
 // thrading api
 #include "async/cthread.h"
 
+
+
 class CSocket
 {
+private:
+    // simple adding mechanism for a callstack
+    struct node {
+        int (*cb)(const char*);
+        void*   userdata;
+        struct node* next;
+    };
+
+    struct node*   p_head;
+
+    void push(int (*cb)(const char*), void *pdata);
+    struct node* pop(void);
+
 public:
     CSocket();
     virtual ~CSocket();
 
-    virtual void*   get_in_address(struct sockaddr* addr);
-    virtual int     Connect(const char* host, const char *port);
-    virtual int     Bind(const char* host, const char *port);
+    void*   get_in_address(struct sockaddr* addr);
+    int     Connect(const char* host, const char *port);
+    int     Bind(const char* host, const char *port);
 
-
-
-    virtual int     Send(const char* msg);
-    virtual int     Recieve(void);
+    int     Send(const char* msg);
+    int     Recieve(void);
 
     static void*    run(void* pdata);
+
+private:
+    static int _privateSend(const char* msg);
 
 public:
     // static control variable
     static bool     m_isRunning;
 private:
-
     char*   getIPByName(const char* host);
 
 protected:
 private:
 
-    int     m_socketFd;
+    static int     m_socketFd;
     union {
         sockaddr_in     ipv4;
         sockaddr_in6    ipv6;
@@ -43,9 +58,7 @@ private:
 
     CXThread            m_thread;
 
-
 };
-
 
 #endif // CSOCKET
 

@@ -6,8 +6,9 @@
 
 
 bool CSocket::m_isRunning = true;
+int CSocket::m_socketFd = 0;
 
-CSocket::CSocket()
+CSocket::CSocket() : p_head(0)
 {
 
 }
@@ -51,17 +52,6 @@ char*   CSocket::getIPByName(const char *host)
 }
 
 
-void*    CSocket::run(void *pdata)
-{
-    CSocket* s = (CSocket*) pdata;
-    while (CSocket::m_isRunning) {
-        // test
-        s->Send("Action: Ping\r\n\r\n");
-        s->Recieve();
-    }
-
-}
-
 
 int    CSocket::Connect(const char *host, const char* port)
 {
@@ -103,14 +93,25 @@ int CSocket::Bind(const char *host, const char* port)
 
 }
 
-int CSocket::Send(const char *msg)
+
+int CSocket::_privateSend(const char *msg)
 {
     if (send(m_socketFd, msg, strlen(msg), 0) < 0) {
         return -1;
     }
 
+}
+
+
+int CSocket::Send(const char *msg)
+{
+
+    push(_privateSend, (void*)msg);
     return 0;
 }
+
+
+
 
 //! the buff is fixed, which is OK ( see in the web usage of recv(...) )
 //! \brief CSocket::Recieve
@@ -128,6 +129,54 @@ int CSocket::Recieve()
     return 0;
 }
 
+
+// privates inner
+
+void CSocket::push(int (*cb)(const char *), void *pdata)
+{
+    struct CSocket::node* pnode = (struct CSocket::node*)
+            malloc(sizeof(struct CSocket::node*));
+    if (pnode == NULL) {
+        // omit
+    } else {
+        pnode->cb = cb;
+        pnode->userdata = pdata;
+        pnode->next = p_head;
+        p_head = pnode;
+    }
+}
+
+
+struct CSocket::node* CSocket::pop()
+{
+    struct CSocket::node* pnode = 0;
+    if (p_head != 0) {
+        pnode = p_head;
+        p_head = p_head->next;
+    }
+    return pnode;
+}
+
+
+//! The runnable function
+//! \brief CSocket::run
+//! \param pdata
+//! \return
+//!
+void*    CSocket::run(void *pdata)
+{
+    CSocket* s = (CSocket*) pdata;
+    s->Send("Action: Login\nUsername: joro\nSecret: sopa123\n\n");
+    while (CSocket::m_isRunning) {
+        // pop the stack and call it
+        struct CSocket::node* pnode = s->pop();
+        if (pnode != 0) {
+            pnode->cb((char*)pnode->userdata);
+            s->Recieve();
+        }
+    }
+
+}
 
 
 

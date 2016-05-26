@@ -28,7 +28,6 @@ void CXThread::init(size_t stackSize, pthread_cb foo, void* userData)
        pthread_attr_setstacksize(&m_attr, stackSize);
        pthread_create(&m_thread, &m_attr, m_cb, userData);
 
-
    } // never call init second time
 }
 
