@@ -66,6 +66,12 @@ void Socket::send(const QString &msg)
 }
 
 
+QByteArray  Socket::recieve()
+{
+    return QByteArray("");
+}
+
+
 void Socket::route()
 {
     switch (m_state) {

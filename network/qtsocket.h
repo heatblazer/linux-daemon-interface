@@ -24,12 +24,12 @@ public:
     explicit Socket(QObject* parent = 0);
     virtual ~Socket();
     void init(void);
-    SocketStates    getCurrentState(void);
-    QByteArray      getBytesRead(void);
+    SocketStates        getCurrentState(void);
+    QByteArray          getBytesRead(void);
 
-    virtual void connectToHost(const QString& host, quint16 port);
-    virtual void send(const QString& msg);
-
+    virtual void        connectToHost(const QString& host, quint16 port);
+    virtual void        send(const QString& msg);
+    virtual QByteArray  recieve(void);
 
 
 signals:
@@ -44,6 +44,7 @@ private slots:
 
 private slots:
     void route(void);
+
 private:
     bool            m_isInitOk;
     SocketStates    m_state;
