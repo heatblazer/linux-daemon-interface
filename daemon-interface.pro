@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     schedulers.cpp \
     network/qtsocket.cpp \
     network/csocket.cpp \
-    async/cthread.cpp
+    async/cthread.cpp \
+    network/msg.cpp
 
 HEADERS += \
     daemon-inerface.h \
@@ -31,12 +32,17 @@ HEADERS += \
     schedulers.h \
     network/qtsocket.h \
     network/csocket.h \
-    async/cthread.h
+    async/cthread.h \
+    network/msg.h
 
 
 #for threads
 LIBS += -lpthread
 
 #for C sockets
-LIBS += -lnsl
 LIBS += -lresolv
+
+#for rpc
+LIBS += -lnsl
+
+
