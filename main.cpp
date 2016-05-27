@@ -5,11 +5,9 @@
 #include "network/csocket.h"
 
 // use Qt TcpSockets
-#ifdef USE_QT_SOCKET
 // Qt
 #include <QtCore>
-#else
-#endif
+#include "network/qtsocket.h"
 // C++
 #include <iostream>
 
@@ -61,54 +59,6 @@ static void list_usb(void)
 //!!! THE TEST MAIN FUNCTION
 using namespace std;
 
-//test some works
-
-
-int work1(int a, void* pdata)
-{
-    ENTER_CRITICAL_SECTION;
-    (void)a;
-    (void) pdata;
-    writer("Worker 2 registerd... do some tasks...\n");
-    LEAVE_CRITICAL_SECTION;
-
-    return 0;
-}
-
-int work2(int a, void* pdata)
-{
-    ENTER_CRITICAL_SECTION;
-    (void)a;
-    (void) pdata;
-    writer("Worker 2 registerd... do some tasks...\n");
-    LEAVE_CRITICAL_SECTION;
-    return 0;
-}
-
-int work3(int a, void* pdata)
-{
-    ENTER_CRITICAL_SECTION;
-    (void)a;
-    (void) pdata;
-    list_usb();
-    LEAVE_CRITICAL_SECTION;
-    return 0;
-}
-
-int work4(int a, void* pdata)
-{
-    ENTER_CRITICAL_SECTION;
-    (void)a;
-    (void) pdata;
-    writer("Worker 2 registerd... do some tasks...\n");
-    LEAVE_CRITICAL_SECTION;
-
-    return 0;
-}
-
-#define MIN 60
-#define HR (MIN * 60 )
-
 int main(int argc, char** argv)
 {
 
@@ -130,39 +80,31 @@ int main(int argc, char** argv)
 // register and deregister in separate threads
 //     daemon1.start(argc, argv);
 
-
-#if 0
     QCoreApplication ap(argc, argv);
     mrsockets::Socket s;
     s.init();
     s.init();
-    s.connectToHost("google.com", 80);
+    s.connectToHost("127.0.0.1", 8080);
     s.send("");
 
     return ap.exec();
-#endif
-
 #if 0
-    CXThread cx;
-    cx.init();
-#endif
     srand(time(0));
 
     CSocket s;
 
-    //s.Connect("192.168.32.89", "5038");
-    s.Bind("192.168.32.89", "5038");
-    /*
-    for(;;) {
-
-       int i = rand() % 100;
-       // 20 percent chacne
-      s.Send("Action: Ping\n\n");
-      usleep(0);
-
+    if (!s.Connect("127.0.0.1", "8080") == 0) {
+        return 1;
     }
-*/
+    //s.Bind("192.168.32.89", "5038");
+
+    for(;;) {
+        s.Send("Hello world");
+        usleep(0);
+    }
+
     return 0;
+#endif // not QT based
 
 }
 
