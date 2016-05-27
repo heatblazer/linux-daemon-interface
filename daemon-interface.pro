@@ -21,7 +21,14 @@ SOURCES += main.cpp \
     network/qtsocket.cpp \
     network/csocket.cpp \
     async/cthread.cpp \
-    network/msg.cpp
+    network/msg.cpp \
+    jsonrpc/error.cpp \
+    jsonrpc/httphelper.cpp \
+    jsonrpc/peer.cpp \
+    jsonrpc/responsehandler.cpp \
+    jsonrpc/tcphelper.cpp \
+    jsonrpc/qt-json/json.cpp \
+    Example/qjsontest.cpp
 
 HEADERS += \
     daemon-inerface.h \
@@ -33,7 +40,14 @@ HEADERS += \
     network/qtsocket.h \
     network/csocket.h \
     async/cthread.h \
-    network/msg.h
+    network/msg.h \
+    jsonrpc/error.h \
+    jsonrpc/httphelper.h \
+    jsonrpc/peer.h \
+    jsonrpc/responsehandler.h \
+    jsonrpc/tcphelper.h \
+    jsonrpc/qt-json/json.h \
+    Example/qjsontest.h
 
 
 #for threads

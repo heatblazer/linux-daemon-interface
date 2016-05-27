@@ -46,7 +46,7 @@ QByteArray  Msg::submit(bool isValid)
     if (isValid) {
         return m_message.toLocal8Bit();
     } else {
-        return QByteArray(""); // empty array
+        return QByteArray(""); // empty array check size
     }
 }
 
