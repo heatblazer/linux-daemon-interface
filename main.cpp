@@ -7,6 +7,7 @@
 // use Qt TcpSockets
 // Qt
 #include <QtCore>
+#include "network/msg.h"
 #include "network/qtsocket.h"
 // C++
 #include <iostream>
@@ -84,8 +85,18 @@ int main(int argc, char** argv)
     mrsockets::Socket s;
     s.init();
     s.init();
-    s.connectToHost("127.0.0.1", 8080);
-    s.send("");
+    s.connectToHost("192.168.32.89", 5038);
+
+    mrsockets::Msg msg;
+
+    // this is to be made private
+
+    QByteArray msgtosend = msg.append("action:login\n")
+       .append("username:joro\n")
+       .append("secret:sopa123\n")
+       .append("\n").submit();
+
+    s.send(QString(msgtosend));
 
     return ap.exec();
 #if 0
