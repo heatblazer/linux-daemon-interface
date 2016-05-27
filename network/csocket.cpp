@@ -88,7 +88,7 @@ int    CSocket::Connect(const char *host, const char* port)
     // move the threads elsewhere, since we`ll stick here
     // before we got loged in
     //             stack size, runnable,   usrdata, priority //
-    m_thread.init(1024 * 1024, CSocket::run, this, 10);
+    m_thread.init(1024 * 1024, CSocket::run, this, 10, false);
 
     return 0;
 }
@@ -241,8 +241,9 @@ void CSocket::pop(struct CSocket::node** pRet)
 void*    CSocket::run(void *pdata)
 {
     CSocket* s = (CSocket*) pdata;
+#ifdef ASTERISK
     s->Send("Action: Login\nUsername: joro\nSecret: sopa123\n\n");
-
+#endif
     while (CSocket::m_isRunning) {
         // pop the stack and call it
         if (!m_isRunning) {
