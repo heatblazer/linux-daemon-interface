@@ -15,7 +15,8 @@ CXThread::~CXThread()
 
 
 
-void CXThread::init(size_t stackSize, pthread_cb foo, void* userData, int prio)
+void CXThread::init(size_t stackSize, pthread_cb foo, void* userData,
+                    int prio, bool isDetached)
 {
    static int is_init = 0;
    if (is_init == 0) {
@@ -23,12 +24,14 @@ void CXThread::init(size_t stackSize, pthread_cb foo, void* userData, int prio)
         if (stackSize <= 0) {
             stackSize = 128 * 1024; // 128 k stack
        }
+       // better priorities in the future when more threads are needed
        if (prio < 1) {
            prio = 15;
        }
 
        m_cb = foo;
        pthread_attr_init(&m_attr);
+
 
        // set priority
        sched_param param;
@@ -38,8 +41,14 @@ void CXThread::init(size_t stackSize, pthread_cb foo, void* userData, int prio)
 
        // set stack size
        pthread_attr_setstacksize(&m_attr, stackSize);
+       // make it run independantly
+       if (isDetached) {
+           pthread_detach(m_thread);
+       }
+
        pthread_create(&m_thread, &m_attr, m_cb, userData);
-       pthread_detach(m_thread);
+
+
    } // never call init second time
 }
 
