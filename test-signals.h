@@ -45,10 +45,7 @@ public:
 
 class TestSignals
 {
-   //you have to implement all signals!
-private:
-
-
+// you have to implement your signals
 public:
    static SignalsInterface* m_sigInterface;
 
