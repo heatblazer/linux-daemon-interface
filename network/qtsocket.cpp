@@ -15,8 +15,11 @@ Socket::Socket(QObject *parent) :
 
 Socket::~Socket()
 {
-    if (p_socket != 0) {
-        delete p_socket;
+    for(int i=0; i < SocketServer::SIZE; ++i){
+        if (p_sockets[i]) {
+            delete p_sockets[i];
+            p_sockets[i] = nullptr;
+        }
     }
 }
 
@@ -24,23 +27,23 @@ Socket::~Socket()
 void Socket::init()
 {
     if (!m_isInitOk) {
-      p_socket = new QTcpSocket(this);
-      if (p_socket == 0) {
+      p_sockets[SocketServer::SOCKET] = new QTcpSocket(this);
+      if (p_sockets[SocketServer::SOCKET] == 0) {
         m_isInitOk = false;
       } else {
-        connect(p_socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
+        connect(p_sockets[SocketServer::SOCKET], SIGNAL(stateChanged(QAbstractSocket::SocketState)),
                 this, SLOT(handleStateChange(QAbstractSocket::SocketState)));
 
-        connect(p_socket, SIGNAL(connected()),
+        connect(p_sockets[SocketServer::SOCKET], SIGNAL(connected()),
                 this, SLOT(handleConnect()));
 
-        connect(p_socket, SIGNAL(disconnected()),
+        connect(p_sockets[SocketServer::SOCKET], SIGNAL(disconnected()),
                 this, SLOT(handleDisconnect()));
 
-        connect(p_socket, SIGNAL(bytesWritten(qint64)),
+        connect(p_sockets[SocketServer::SOCKET], SIGNAL(bytesWritten(qint64)),
                 this, SLOT(handleBytesWritten(qint64)));
 
-        connect(p_socket, SIGNAL(readyRead()),
+        connect(p_sockets[SocketServer::SOCKET], SIGNAL(readyRead()),
                 this, SLOT(handleReadyRead()));
 
         connect(this, SIGNAL(stateChange(SocketStates)),
@@ -56,7 +59,7 @@ void Socket::init()
 
 void Socket::send(const QString &msg)
 {
-    qint64 bytes = p_socket->write(msg.toLocal8Bit());
+    qint64 bytes = p_sockets[SocketServer::SOCKET]->write(msg.toLocal8Bit());
     if (bytes <= 0) {
         m_state = NOT_READY;
     } else {
@@ -76,7 +79,7 @@ void Socket::route()
 {
     switch (m_state) {
     case CONECTED:
-        p_socket->write("HEAD / HTTP/1.0\r\n\r\n\r\n\r\n");
+        p_sockets[SocketServer::SOCKET]->write("HEAD / HTTP/1.0\r\n\r\n\r\n\r\n");
         break;
     case DISCONNECTED:
 
@@ -102,8 +105,8 @@ void Socket::handleReadyRead()
 {
     m_state = NOT_READY;
 
-    if (p_socket->canReadLine()) {
-        m_bytes = p_socket->readAll();
+    if (p_sockets[SocketServer::SOCKET]->canReadLine()) {
+        m_bytes = p_sockets[SocketServer::SOCKET]->readAll();
         std::cout << m_bytes.toStdString() << std::endl; // test
         m_state = READY;
     }
@@ -119,7 +122,7 @@ QByteArray Socket::getBytesRead()
 
 void Socket::connectToHost(const QString &host, quint16 port)
 {
-    p_socket->connectToHost(host, port);
+    p_sockets[SocketServer::SOCKET]->connectToHost(host, port);
 
 }
 

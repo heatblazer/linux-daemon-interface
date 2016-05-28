@@ -1,8 +1,11 @@
 #ifndef SOCKET_H
 #define SOCKET_H
 
-// the socket
+// the socket and server
 #include <QTcpSocket>
+#include <QTcpServer>
+
+
 
 namespace mrsockets {
 
@@ -15,10 +18,17 @@ enum SocketStates {
 };
 
 
+
+
 class Socket : public QObject
 {
 Q_OBJECT
 
+    enum SocketServer {
+        SOCKET,
+        SERVER,
+        SIZE
+    };
 
 public:
     explicit Socket(QObject* parent = 0);
@@ -50,7 +60,8 @@ private:
     SocketStates    m_state;
     QByteArray      m_bytes;
 
-    QTcpSocket*     p_socket;
+    QTcpSocket*     p_sockets[SocketServer::SIZE];
+    QTcpServer*     p_server;
 
 };
 

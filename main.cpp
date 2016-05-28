@@ -1,119 +1,71 @@
 // own headers
+#include "async/cthread.h"
 #include "daemon-inerface.h"
 #include "defs.h"
-#include "async/cthread.h"
+#include "Example/qjsontest.h"
+#include "tests.h"
 #include "network/csocket.h"
+#include "network/msg.h"
+#include "network/qtsocket.h"
 
-// use Qt TcpSockets
 // Qt
 #include <QtCore>
 #include <QApplication>
-#include "network/msg.h"
-#include "network/qtsocket.h"
+
 // C++
 #include <iostream>
 
-// ANIS C
-#include <stdlib.h>
-#include <time.h>
-
-#include "Example/qjsontest.h"
-
-//test tasks
-///1. list new usb devices when plugged
-#include <stdio.h>
-
-//test some d-bus
-///2. message some logs with dbus
-
-#define LINE_80 "------------------------------------------------------------------------\n"
-static void list_usb(void)
-{
-#if 0
-    fprintf(stdout, "%s", LINE_80);
-    fprintf(stdout, "USB devices:\n");
-
-    usb_init();
-    unsigned int busses =  usb_find_busses();
-    unsigned int devices = usb_find_devices();
-    fprintf(stdout, "Busses: [%d]\tDevices: [%d]\n", busses, devices);
-
-    struct usb_bus* bus = NULL;
-    struct usb_device*     udev = NULL;
-
-
-    for ( bus = usb_busses; bus != NULL; bus = bus->next)
-    {
-        for ( udev = bus->devices; udev != NULL; udev = udev->next )
-        {
-            char msg_buffer[64] = {0};
-            sprintf(msg_buffer, "[%04x][%04x]\n", udev->descriptor.idVendor,
-                                                   udev->descriptor.idProduct);
-            writer(msg_buffer);
-
-        }
-    }
-    fprintf(stdout, "%s", LINE_80);
-#endif
-}
-
 
 //!!! THE TEST MAIN FUNCTION
-using namespace std;
 
 int main(int argc, char** argv)
 {
 
-//    Daemon::set_sleep_time(MIN * 5);
-//    Daemon daemon1;
+    return test0(argc, argv);
 
-//! IMPORTANT TODO: tasks must be in separate threads
-//!
-//! update: tasks can enter in critical sections
-
-//      daemon1.registerTask(1, work1, 0, 0);
-//      daemon1.registerTask(2, work2, 0, 0);
-//      daemon1.registerTask(3, work3, 0, 0);
-//      daemon1.registerTask(4, work4, 0,0);
-//known bug with deregistering tasks
-
-//TODO!
-//register before start, for more flexible interface use
-// register and deregister in separate threads
-//     daemon1.start(argc, argv);
-    QApplication ap(argc, argv);
+}
 
 
-    JsonRPC::QRpc rpc("RPC");
-    QWidget mw;
-    mw.setLayout((QHBoxLayout*)&JsonRPC::QRpc::hlayout);
-    mw.show();
+int test0(int argc, char** argv) {
 
-    return ap.exec();
 
-#if 0
     QCoreApplication ap(argc, argv);
     mrsockets::Socket s;
     s.init();
     s.init();
-    s.connectToHost("192.168.32.89", 5038);
+    s.connectToHost("google.com", 80);
 
     mrsockets::Msg msg;
 
     // this is to be made private
 
-    QByteArray msgtosend = msg.append("action:login\n")
-       .append("username:joro\n")
-       .append("secret:sopa123\n")
-       .append("\n").submit();
+    QByteArray msgtosend = msg.append("HEAD HTTP/1.0")
+       .append("\r\n\r\n\r\n")
+       .submit();
 
     s.send(QString(msgtosend));
 
     return ap.exec();
 
-#endif
+}
 
-#if 0
+int test1(int argc, char** argv)
+{
+    Daemon::set_sleep_time(5);
+    Daemon daemon1;
+
+    //! IMPORTANT TODO: tasks must be in separate threads
+    //!
+    //! update: tasks can enter in critical sections
+
+
+    daemon1.start(argc, argv);
+}
+
+
+
+int test2(int argc, char** argv)
+{
     srand(time(0));
 
     CSocket s;
@@ -129,7 +81,22 @@ int main(int argc, char** argv)
     }
 
     return 0;
-#endif // not QT based
+
+}
+
+
+
+int test3(int argc, char** argv)
+{
+    QApplication ap(argc, argv);
+
+
+    JsonRPC::QRpc rpc("RPC");
+    QWidget mw;
+    mw.setLayout((QHBoxLayout*)&JsonRPC::QRpc::hlayout);
+    mw.show();
+
+    return ap.exec();
 
 }
 
