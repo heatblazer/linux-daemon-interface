@@ -20,6 +20,8 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
+// custom logger
+#include "qtlogger/qtlogger.h"
 
 
 // msvc atomics operations

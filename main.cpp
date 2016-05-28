@@ -27,10 +27,9 @@ static int t0(int argc, void* pArgs)
 
 int main(int argc, char** argv)
 {
+
     qtdaemon::QtDaemon qd;
     qd.start(argc, argv);
-
-
 }
 
 

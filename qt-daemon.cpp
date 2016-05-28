@@ -233,8 +233,10 @@ void QtDaemon::handleUnixChange(void)
     switch(m_state) {
 
     case UxSignals::SAbrt: // SIot
+        MyLogger::log("SigAbort");
         break;
     case UxSignals::SAlrm:
+        MyLogger::log("SigAlrm");
         break;
     case UxSignals::SBus:
         break;
@@ -245,12 +247,14 @@ void QtDaemon::handleUnixChange(void)
     case UxSignals::SFpe:
         break;
     case UxSignals::SHup:
+        MyLogger::log("SigHup");
         break;
     case UxSignals::SIll:
         break;
     case UxSignals::SInt:
         break;
     case UxSignals::SKill:
+        MyLogger::log("SigKill");
         break;
     case UxSignals::SPipe:
         break;
@@ -271,6 +275,7 @@ void QtDaemon::handleUnixChange(void)
     case UxSignals::SSys:
         break;
     case UxSignals::STerm:
+        MyLogger::log("SigTerm");
         break;
     case UxSignals::STrap:
         break;
@@ -486,7 +491,7 @@ int QtDaemon::start(int argc, char **argv)
     {
         // do something here
 
-        sleep(1);
+        sleep(3600);
     } while (app.exec());
 
 

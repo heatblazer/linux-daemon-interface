@@ -1,7 +1,6 @@
 #ifndef DAEMONINERFACE
 #define DAEMONINERFACE
 #include "defs.h"
-#include "test-signals.h"
 #include <stdlib.h>
 
 #ifdef MAX_TASKS
@@ -54,7 +53,6 @@ private:
     pid_t m_sessionId;
     static unsigned int m_sleepSeconds;
 
-    TestSignals m_signals;
 
     //this struct will be used for more advanced programs
     //with sigaction(...)
