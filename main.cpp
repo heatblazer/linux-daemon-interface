@@ -7,6 +7,7 @@
 // use Qt TcpSockets
 // Qt
 #include <QtCore>
+#include <QApplication>
 #include "network/msg.h"
 #include "network/qtsocket.h"
 // C++
@@ -16,7 +17,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-
+#include "Example/qjsontest.h"
 
 //test tasks
 ///1. list new usb devices when plugged
@@ -80,7 +81,17 @@ int main(int argc, char** argv)
 //register before start, for more flexible interface use
 // register and deregister in separate threads
 //     daemon1.start(argc, argv);
+    QApplication ap(argc, argv);
 
+
+    JsonRPC::QRpc rpc("RPC");
+    QWidget mw;
+    mw.setLayout((QHBoxLayout*)&JsonRPC::QRpc::hlayout);
+    mw.show();
+
+    return ap.exec();
+
+#if 0
     QCoreApplication ap(argc, argv);
     mrsockets::Socket s;
     s.init();
@@ -99,6 +110,9 @@ int main(int argc, char** argv)
     s.send(QString(msgtosend));
 
     return ap.exec();
+
+#endif
+
 #if 0
     srand(time(0));
 

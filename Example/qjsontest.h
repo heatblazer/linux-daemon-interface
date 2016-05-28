@@ -1,6 +1,12 @@
 #pragma once
 #include <QtCore>
-
+#include <QThread>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QObject>
+#include <QTcpServer>
+#include <QTcpSocket>
 
 
 namespace JsonRPC {
@@ -8,21 +14,17 @@ namespace JsonRPC {
 class Peer;
 class ResponseHandler;
 
-} // namespace JsonRPC
 
-class QTcpServer;
-class QTcpSocket;
 
 class QRpc : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit QRpc(QObject *parent = 0);
+    explicit QRpc(const QString& name, QObject *parent = 0);
     ~QRpc();
 
 // FIXME implement all handles later
-#if 0
 private slots:
     void onReadyRequest(const QSharedPointer<JsonRPC::ResponseHandler> &handler);
     void onReadyResponseMessage(const QByteArray &message);
@@ -38,7 +40,7 @@ private slots:
     void onClientSocketConnected();
     void onClientSocketReadyRead();
     void onClientDisconnected();
-#endif
+
 private:
 
     JsonRPC::Peer *peer;
@@ -51,4 +53,17 @@ private:
     QTcpSocket *clientSocket;
     QByteArray clientBuffer;
     quint8 clientMessageSize;
+
+public:
+    static QHBoxLayout hlayout;
+
+private:
+    // gui members
+    QPushButton     m_button;
+    QString         m_name;
+
+
+
 };
+
+}
