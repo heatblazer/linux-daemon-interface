@@ -7,6 +7,7 @@
 #include "network/csocket.h"
 #include "network/msg.h"
 #include "network/qtsocket.h"
+#include "qt-daemon.h"
 
 // Qt
 #include <QtCore>
@@ -18,10 +19,17 @@
 
 //!!! THE TEST MAIN FUNCTION
 
+static int t0(int argc, void* pArgs)
+{
+    printf("This is task 0\n");
+    sleep(1);
+}
+
 int main(int argc, char** argv)
 {
+    qtdaemon::QtDaemon qd;
+    qd.start(argc, argv);
 
-    return test0(argc, argv);
 
 }
 
