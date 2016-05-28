@@ -38,7 +38,6 @@ static void fiforeader(void)
     //fixed bug with not closing the fptr
     fclose(fp);
 
-
 }
 
 ///
@@ -49,7 +48,6 @@ Daemon::Daemon()
     //it`s better to have your own implementation of the
     //signal handler function
 
-    m_tasks =  NULL;
 }
 
 Daemon::~Daemon()
@@ -83,9 +81,9 @@ int Daemon::start(int argc, char** argv)
 {
     //test interface
     (void) argc;
+    (void) argv;
 
     myFork();
-
 
     m_sessionId = setsid();
     if ( m_sessionId < 0 )
@@ -104,19 +102,13 @@ int Daemon::start(int argc, char** argv)
     startTime =  endTime = time(NULL);
 
     myFork();
-    //special init section
-    //{
-
-
 
     task* ring = NULL;
 
 
     do {
-    //fifo section
-
-        fiforeader();
-        ring = m_tasks;
+        // rotate the buffer
+        ring = m_tasks_head;
         while ( ring != NULL )
         {
             if ( ring->pTask ){
@@ -124,9 +116,7 @@ int Daemon::start(int argc, char** argv)
             }
             ring = ring->next;
         }
-        ring = m_tasks;
-
-   //     sleep(m_sleepSeconds);
+        ring = m_tasks_head;
 
    } while ( 1 );
 
@@ -143,26 +133,13 @@ void  Daemon::registerTask(int ID, int (*work)(int, void*), int argc, void *pArg
     ntask->pArgs  = pArg;
     ntask->pTask = work;
 
-    ntask->next = m_tasks;
-    m_tasks = ntask;
+    ntask->next = m_tasks_head;
+    m_tasks_head = ntask;
 
 }
 
 
 void Daemon::deregisterTask(int ID)
 {
-    task* it = m_tasks;
-    while ( it != NULL )
-    {
-        if ( it->taskId == ID ) {
-            task* finished = it;
-            if ( finished->pTask ){
-                //complete the task first!
-                finished->pTask(finished->argc, finished->pArgs);
-            }
-            it = it->next;
-            free(finished);
-        }
-        it = it->next;
-    }
+    (void) ID;
 }

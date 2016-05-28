@@ -46,14 +46,7 @@ private:
         struct _task* next;
     } task;
 
-    task*       m_tasks;
-
-    ///for IPC tasks
-    struct
-    {
-        long mtype;
-        char task_name[200];
-    } msg_task;
+    task*       m_tasks_head;
 
 private:
 
