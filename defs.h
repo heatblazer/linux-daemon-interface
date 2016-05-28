@@ -1,4 +1,3 @@
-#pragma once
 #ifndef DEFS
 #define DEFS
 
@@ -60,15 +59,13 @@
     } while ( 0 ) ;
 
 
-#define LOG_FILE "log.txt"
-void writer(const char* msg);
 typedef void (*pSignalHanlder)(int);
 
 
 // enum unix signals
 enum UxSignals {
     SHup	= SIGHUP,		/* Hangup (POSIX).  */
-    Sint	= SIGINT,		/* Interrupt (ANSI).  */
+    SInt	= SIGINT,		/* Interrupt (ANSI).  */
     SQuit	= SIGQUIT,		/* Quit (POSIX).  */
     SIll	= SIGILL,		/* Illegal instruction (ANSI).  */
     STrap	= SIGTRAP,		/* Trace trap (POSIX).  */
@@ -104,9 +101,6 @@ enum UxSignals {
     SUnused = SIGUNUSED
 
 };
-
-
-
 
 
 
