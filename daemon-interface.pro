@@ -14,7 +14,6 @@ TARGET = test_daemon
 
 SOURCES += main.cpp \
     daemon-interface.cpp \
-    test-signals.cpp \
     defs.cpp \
     signals-interface.cpp \
     watchdog.cpp \
@@ -36,7 +35,6 @@ HEADERS += \
     daemon-inerface.h \
     signals-interface.h \
     defs.h \
-    test-signals.h \
     watchdog.h \
     schedulers.h \
     network/qtsocket.h \
