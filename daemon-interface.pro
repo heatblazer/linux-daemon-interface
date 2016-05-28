@@ -29,7 +29,8 @@ SOURCES += main.cpp \
     jsonrpc/responsehandler.cpp \
     jsonrpc/tcphelper.cpp \
     jsonrpc/qt-json/json.cpp \
-    Example/qjsontest.cpp
+    Example/qjsontest.cpp   \
+    qt-daemon.cpp
 
 HEADERS += \
     daemon-inerface.h \
@@ -48,7 +49,8 @@ HEADERS += \
     jsonrpc/responsehandler.h \
     jsonrpc/tcphelper.h \
     jsonrpc/qt-json/json.h \
-    Example/qjsontest.h
+    Example/qjsontest.h \
+    qt-daemon.h
 
 
 #for threads
