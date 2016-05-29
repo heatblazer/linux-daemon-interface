@@ -13,7 +13,7 @@ QtDaemon*   QtDaemon::s_instance = new QtDaemon;
 
 
 QtDaemon::QtDaemon(QObject *parent)
-    :QObject(parent)
+    :QObject(parent), isInit(false)
 {
     // create the QtDaemon
     signal(SIGHUP, _onSigHup);			/* Hangup (POSIX).  */
@@ -463,39 +463,39 @@ void QtDaemon::_onSigXFSZ(int sig)
 }
 
 
-int QtDaemon::start(int argc, char **argv)
+int QtDaemon::start(QApplication* app, int argc, char **argv)
 {
-    //test interface
-    static QApplication app(argc, argv);
-    _fork();
+    // one shot daemon only
+    if (!isInit) {
 
-    m_sessionId = setsid();
-    if ( m_sessionId < 0 )
-    {
-        fprintf(stderr, "Failed in setsid(): %d\n",
-                m_sessionId);
-        exit(EXIT_FAILURE);
+        isInit = true;
+        _fork();
+
+        m_sessionId = setsid();
+        if ( m_sessionId < 0 )
+        {
+            fprintf(stderr, "Failed in setsid(): %d\n",
+                    m_sessionId);
+            exit(EXIT_FAILURE);
+        }
+
+        close(STDIN_FILENO);
+        close(STDOUT_FILENO);
+        close(STDERR_FILENO);
+
+        time_t startTime ;
+        time_t endTime ;
+        startTime =  endTime = time(NULL);
+
+         _fork();
+         do {
+
+             sleep(1000);
+        } while(app->exec());
     }
 
-    close(STDIN_FILENO);
-    close(STDOUT_FILENO);
-    close(STDERR_FILENO);
+    return 0;
 
-    time_t startTime ;
-    time_t endTime ;
-    startTime =  endTime = time(NULL);
-
-    _fork();
-
- //   do
-//    {
-        // do something here
-
-//        sleep(3600);
-//    } while (app.exec());
-
-
-   return app.exec(); //the return 1
 }
 
 

@@ -3,6 +3,7 @@
 
 // QObject
 #include <QtCore>
+#include <QApplication>
 
 #include "signals-interface.h"
 
@@ -23,7 +24,7 @@ public:
     explicit QtDaemon(QObject* parent=0);
     ~QtDaemon();
 
-    virtual int start(int argc, char** argv); // reflect the C main
+    virtual int start(QApplication *app, int argc, char** argv); // reflect the C main
 private:
     void _fork(void);
 
@@ -171,6 +172,7 @@ private:
 private:  /// members
     pid_t   m_pid;
     pid_t   m_sessionId;
+    bool    isInit;
 };
 
 } // namespace qtdaemon
