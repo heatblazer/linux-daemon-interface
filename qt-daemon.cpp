@@ -487,15 +487,15 @@ int QtDaemon::start(int argc, char **argv)
 
     _fork();
 
-    do
-    {
+ //   do
+//    {
         // do something here
 
-        sleep(3600);
-    } while (app.exec());
+//        sleep(3600);
+//    } while (app.exec());
 
 
-   return 0; //the return 1
+   return app.exec(); //the return 1
 }
 
 
