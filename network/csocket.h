@@ -28,15 +28,22 @@ private:
 
 public:
     CSocket();
-    virtual ~CSocket();
+    virtual ~CSocket(); // do we need to inherit sth. from this class?
 
 
+    // virtual methods
     virtual void*   get_in_address(struct sockaddr* addr);
+
+    // connect to a host
     virtual int     Connect(const char* host, const char *port);
+
+    // use as server
     virtual int     Bind(const char* host, const char *port);
 
+    // send and recieve metods
     virtual int     Send(const char* msg);
     virtual int     Recieve(void);
+
 
     //! The thread callback
     //! \brief run
@@ -44,7 +51,6 @@ public:
     //! \return
     //!
     static void*    run(void* pdata);
-
 
 public:
     // static control variable

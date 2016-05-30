@@ -10,7 +10,7 @@ int CSocket::m_sockets[CSocket::ClienServer::MAX]={0};
 
 CSocket::CSocket() : p_head(0)
 {
-
+    m_thread.init(1024 * 1024, CSocket::run, this, 10, false);
 }
 
 
@@ -102,49 +102,7 @@ int    CSocket::Connect(const char *host, const char* port)
 int CSocket::Bind(const char *host, const char* port)
 {
 
-    m_sockets[ClienServer::CLIENT] = socket(AF_INET, SOCK_STREAM, 0);
 
-    if (m_sockets[ClienServer::CLIENT] < 0) {
-        return -1;
-    }
-
-    bzero((char*)&m_address[ClienServer::CLIENT].ipv4,
-            sizeof(m_address[ClienServer::CLIENT].ipv4) );
-
-    m_address[ClienServer::CLIENT].ipv4.sin_family = AF_INET;
-    m_address[ClienServer::CLIENT].ipv4.sin_addr.s_addr = INADDR_ANY;
-    m_address[ClienServer::CLIENT].ipv4.sin_port = htons((uint16_t) atoi(port));
-
-    if (bind(m_sockets[ClienServer::CLIENT],
-             (struct sockaddr*) &m_address[ClienServer::CLIENT].ipv4,
-             sizeof(m_address[ClienServer::CLIENT].ipv4)) < 0) {
-        return -1;
-    }
-
-    listen(m_sockets[ClienServer::CLIENT], 5);
-    int clilen = sizeof(m_sockets[ClienServer::CLIENT]);
-
-    m_sockets[ClienServer::SERVER] =
-            accept(m_sockets[ClienServer::CLIENT],
-                    (struct sockaddr*)&m_address[ClienServer::SERVER],
-                    (socklen_t*)&clilen);
-
-    if (m_sockets[ClienServer::SERVER] < 0) {
-        return -1;
-    }
-
-    char buffer[256]={0}; // good practices
-    bzero(buffer, 256);
-
-    if(read(m_sockets[ClienServer::SERVER], buffer, 256) < 0) {
-        return -1;
-    }
-
-    if (write(m_sockets[ClienServer::SERVER], "Got your message", 20) < 0) {
-        return -1;
-    }
-
-    return 0;
 }
 
 
@@ -240,24 +198,56 @@ void CSocket::pop(struct CSocket::node** pRet)
 //!
 void*    CSocket::run(void *pdata)
 {
-    CSocket* s = (CSocket*) pdata;
-#ifdef ASTERISK
-    s->Send("Action: Login\nUsername: joro\nSecret: sopa123\n\n");
-#endif
-    while (CSocket::m_isRunning) {
-        // pop the stack and call it
-        if (!m_isRunning) {
-            break;
+    // omit for now
+    CSocket *psck = (CSocket*)pdata;
+
+    struct sockaddr_in si_me, si_other;
+    int s, i, slen=sizeof(si_me), recv_len;
+    char buff[1024]={0}; // one shot zerofill
+    if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+        perror("socket");
+        exit(1);
+    }
+
+    memset((char*)&si_me, 0, sizeof(si_me));
+
+    si_me.sin_family = AF_INET;
+    si_me.sin_port = htons(8888);
+    si_me.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    if(bind(s, (struct sockaddr*)&si_me, sizeof(si_me)) < 0) {
+        perror("bind");
+        exit(1);
+    }
+
+
+    while (CSocket::m_isRunning)
+    {
+        FILE* fp = fopen("servlog.log", "a");
+        if(!fp) {
+            // handle err
         }
-        // use mutex locks for now
-        struct CSocket::node* pnode = 0;
-        s->pop(&pnode);
-        if (pnode != 0) {
-            pnode->cb((char*)pnode->userdata);
-            s->Recieve();
+        fprintf(fp, "Waiting data:");
+
+        if ((recv_len = recvfrom(s, buff, 1024, 0,
+                                 (struct sockaddr*)&si_other,
+                                 (socklen_t*)&slen)) < 0)
+        {
+            perror("recvfrom");
+            exit(1);
         }
 
-        usleep(10);
+        fprintf(fp, "Recv packs from: %s:%d\n", inet_ntoa(si_other.sin_addr),
+                ntohs(si_other.sin_port));
+
+        fprintf(fp, "Data: %s\n", buff);
+
+        if(sendto(s, buff, recv_len, 0, (struct sockaddr*)&si_other, slen) < 0)
+        {
+            perror("sendto");
+            exit(1);
+        }
+        fclose(fp);
     }
 }
 
