@@ -29,6 +29,7 @@ int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
     qtdaemon::QtDaemon qd;
+
     return qd.start(&app, argc, argv);
 
 }

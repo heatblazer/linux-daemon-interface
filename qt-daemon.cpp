@@ -3,6 +3,7 @@
 // qt specific
 #include <QApplication>
 
+#include "network/csocket.h"
 #include "defs.h"
 
 namespace qtdaemon {
@@ -488,9 +489,11 @@ int QtDaemon::start(QApplication* app, int argc, char **argv)
         startTime =  endTime = time(NULL);
 
          _fork();
-         do {
 
-             sleep(1000);
+
+         do {
+            static CSocket sc;
+
         } while(app->exec());
     }
 
