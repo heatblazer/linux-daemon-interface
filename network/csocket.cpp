@@ -251,6 +251,51 @@ void*    CSocket::run(void *pdata)
     }
 }
 
+// TODO : work out the test
+void *CSocket::test_run(void *pdata)
+{
+#if 0
+    struct sockaddr_in si_other;
+    int s, i, slen=sizeof(si_other);
+    char buff[512]={0};
+    char message[512]={0};
+
+    if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) <0) {
+        die("socket");
+    }
+
+    memset((char*)&si_other, 0, sizeof(si_other));
+    si_other.sin_family = AF_INET;
+    si_other.sin_port = htons(8888);
+
+    if(inet_aton("127.0.0.1", &si_other.sin_addr) == 0) {
+        fprintf(stderr, "inet_aton() falied\n");
+        exit(1);
+    }
+
+
+    while(1) {
+        printf(">");
+        gets(message);
+
+        if(sendto(s, message, strlen(message), 0, (struct sockaddr*)&si_other
+                  , slen) == -1) {
+            die("sendto()");
+        }
+        memset(buff, 0, 512);
+
+        if(recvfrom(s, buff, 512, 0, (struct sockaddr*)&si_other, &slen) == -1)
+        {
+            die("recvfrom()");
+        }
+        puts(buff);
+    }
+
+    close(s);
+    return 0;
+#endif
+}
+
 
 
 

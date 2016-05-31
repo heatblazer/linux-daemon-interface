@@ -492,7 +492,9 @@ int QtDaemon::start(QApplication* app, int argc, char **argv)
 
 
          do {
+            // test: listen to 127.0.0.1: 8888
             static CSocket sc;
+            (void)sc;
 
         } while(app->exec());
     }

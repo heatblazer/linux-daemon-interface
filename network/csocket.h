@@ -52,6 +52,9 @@ public:
     //!
     static void*    run(void* pdata);
 
+    static void* test_run(void* pdata);
+
+
 public:
     // static control variable
     static bool     m_isRunning;
