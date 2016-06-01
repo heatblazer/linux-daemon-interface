@@ -12,9 +12,14 @@ CXThread::~CXThread()
 
 }
 
-
-
-
+//! Init a pthread and pass a worker function to it
+//! \brief CXThread::init
+//! \param stackSize - set stack size
+//! \param foo  - the function to be called as a cb
+//! \param userData - pass the usr data
+//! \param prio - set priority 1 - 20 unix
+//! \param isDetached - detach the thread unable to join with others
+//!
 void CXThread::init(size_t stackSize, pthread_cb foo, void* userData,
                     int prio, bool isDetached)
 {
@@ -47,12 +52,12 @@ void CXThread::init(size_t stackSize, pthread_cb foo, void* userData,
        }
 
        pthread_create(&m_thread, &m_attr, m_cb, userData);
-
-
    } // never call init second time
 }
 
-
+//! join a joinable thread watch if not detached
+//! \brief CXThread::join
+//!
 void CXThread::join()
 {
     static int oneshot = 0;
